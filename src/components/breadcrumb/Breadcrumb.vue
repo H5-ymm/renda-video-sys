@@ -17,7 +17,7 @@ export default {
   // props: ['breadcrumbs'],
   data () {
     return {
-      breadcrumbs: ['论坛列表']
+      breadcrumbs: ['招聘会列表']
     }
   },
   watch: {

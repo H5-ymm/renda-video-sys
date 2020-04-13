@@ -194,6 +194,119 @@ export default {
 }
 </script>
 <style lang="scss">
+.teamMessage {
+  padding-bottom: 80px;
+  height: 100%;
+  .title {
+    width: 100%;
+    height: 44px;
+    line-height: 44px;
+    font-size: 14px;
+    color: #333;
+    padding-left: 15px;
+    background: #fff;
+    box-shadow: 0px 4px 4px 0px rgba(106, 106, 106, 0.1);
+    border-radius: 5px;
+  }
+  .section-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    .password-tip {
+      color: #6a6a6a;
+      margin-left: 20px;
+    }
+    .landline-tip {
+      position: absolute;
+      top: 0;
+      right: 0;
+      color: #999999;
+      font-size: 14px;
+    }
+  }
+  .manager-form-row {
+    width: 100%;
+    margin: 0 auto;
+    .teamMessage-form {
+      width: 100%;
+      font-size: 14px;
+      margin-bottom: 70px;
+      .width408 {
+        width: 408px;
+        position: relative;
+      }
+      .width60 {
+        width: 60px;
+      }
+      .width150 {
+        width: 150px;
+      }
+      .landline {
+        width: 20px;
+        height: 1px;
+        background: #6a6a6a;
+        margin: 0 10px;
+        display: inline-block;
+      }
+      .el-input__inner {
+        border: 1px solid #eee;
+      }
+      .team-address {
+        margin-top: 5px;
+      }
+    }
+    .avatar-uploader .el-upload {
+      background: #eee;
+      border-radius: 3px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      color: #999999;
+      font-size: 14px;
+      width: 91px;
+      height: 91px;
+      > p {
+        margin-top: -10px;
+      }
+    }
+    .uploader-card {
+      display: inline-block;
+      margin-right: 20px;
+      .idcard-text {
+        color: #6a6a6a;
+        text-align: center;
+        font-size: 14px;
+      }
+    }
+    .avatar-uploader .el-upload:hover {
+      border-color: #409eff;
+    }
+    .avatar-uploader-icon {
+      font-size: 28px;
+      color: #8c939d;
+      text-align: center;
+      color: #999999;
+      font-size: 42px;
+      margin-top: 10px;
+    }
+    .avatar {
+      width: 91px;
+      height: 91px;
+      display: block;
+    }
+  }
+  .card-uploader-icon {
+    width: 162px;
+    height: 128px;
+  }
+  .idcard-tip {
+    position: absolute;
+    right: -100px;
+    top: 30px;
+    font-size: 14px;
+    color: #999;
+  }
+}
 .x-flex-start-justify {
   display: flex;
   align-items: center;

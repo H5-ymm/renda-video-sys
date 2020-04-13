@@ -20,7 +20,7 @@
         </el-form-item>
       </el-form>
       <div class="table-query">
-        <el-button type="primary" class="select-btn">添加账户</el-button>
+        <el-button type="primary" class="select-btn" @click="addUser">添加账户</el-button>
         <el-button>删除</el-button>
         <span class="select-text">
           已选择
@@ -128,6 +128,11 @@ export default {
     }
   },
   methods: {
+     addUser(){
+      let arr = ['求职账户','添加账户']
+      sessionStorage.setItem('menus', JSON.stringify(arr))
+      this.$router.push('/addUser')
+    },
     reset() {
       this.formParams = {
         limit: 10,

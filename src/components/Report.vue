@@ -31,6 +31,7 @@
         @selection-change="handleSelectionChange"
         @sort-change="sortChange">
         <el-table-column
+          align="center"
           type="selection"
           width="60">
         </el-table-column>

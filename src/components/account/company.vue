@@ -20,7 +20,7 @@
         </el-form-item>
       </el-form>
       <div class="table-query">
-        <el-button type="primary" class="select-btn" @click="$router.push('/companyForm')">添加企业</el-button>
+        <el-button type="primary" class="select-btn" @click="addCompany">添加企业</el-button>
         <el-button>删除</el-button>
         <span class="select-text">
           已选择
@@ -116,10 +116,10 @@ export default {
     // 初始化查询标签数据
     console.log(this.formParams, 'this.formParams')
     this.getList(this.formParams)
+    //  sessionStorage.setItem('menus', JSON.stringify(arr))
   },
   watch: {
     keyword (v) {
-      console.log(v, 1234)
       if (v) {
         this.formParams['reg_date'] = 0
         this.formParams['status'] = 0
@@ -128,6 +128,11 @@ export default {
     }
   },
   methods: {
+    addCompany(){
+      let arr = ['企业账户','添加企业账户']
+      sessionStorage.setItem('menus', JSON.stringify(arr))
+      this.$router.push('/companyForm')
+    },
     reset() {
       this.formParams = {
         limit: 10,

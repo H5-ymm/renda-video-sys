@@ -61,7 +61,7 @@ export default {
         },
         {
           title: '账户管理',
-          icon: 'el-icon-user',
+          icon: 'el-icon-s-custom',
           submenu: [
             {
               title: '求职账户',
