@@ -1,0 +1,11 @@
+
+.el-input__inner {
+  line-height: normal;
+  -webkit-user-select: text;
+  &:focus {
+    padding: 2px 15px;
+  }
+}
+.width200 {
+  width: 200px;
+}

@@ -1,0 +1,72 @@
+.tables-box {
+  overflow: hidden;
+
+  margin-bottom: 10px;
+
+  &.team-list-box {
+    height: 95%;
+    overflow: auto;
+  }
+
+  .table-list {
+    height: 90%;
+    background: #fff;
+    border-radius: 5px;
+    padding: 15px;
+
+    &.company-list {
+      height: calc(100% - 80px);
+    }
+  }
+
+  .team-list {
+    background: #fff;
+    border-radius: 5px;
+    padding: 15px;
+  }
+
+  .width100 {
+    width: 110px;
+  }
+
+  .query-input {
+    margin: 0 20px;
+    width: 180px;
+  }
+
+  .collapse-btn {
+    margin-left: 40px;
+  }
+
+  .hanble-btn {
+    padding-top: 20px;
+  }
+
+  .el-link {
+    margin-left: 10px;
+    padding: 0 20px;
+
+    &.active {
+      color: #FFF;
+      border-radius: 4px;
+      background-color: #409EFF;
+      border-color: #409EFF;
+    }
+  }
+
+  .team-pagination {
+    margin-top: 20px;
+  }
+
+  .tip {
+    margin: 30px 0;
+  }
+
+  .table-button-box {
+    text-align: left;
+
+    .el-button--small {
+      padding: 3px 0;
+    }
+  }
+}
