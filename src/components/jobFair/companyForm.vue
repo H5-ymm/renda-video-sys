@@ -1,6 +1,5 @@
 <template>
   <div class="teamMessage">
-    <div class="title">查看企业信息</div>
     <div class="manager-form-row">
       <el-form
         :model="companyForm"
@@ -9,24 +8,9 @@
         label-width="100px"
         class="teamMessage-form"
       >
-        <userCard :name="companyForm.com_name" @resetPassword="resetPassword"></userCard>
-        <p class="company-title">基本信息</p>
         <section class="section-box">
           <el-form-item label="企业名称" prop="com_name">
-            <el-input v-model="companyForm.com_name" class="width408" placeholder="请输入团队名称"></el-input>
-          </el-form-item>
-          <el-form-item label="企业logo" required>
-            <el-upload
-              class="avatar-uploader"
-              action="customize"
-              ref="upload"
-              :show-file-list="false"
-              :http-request="upload"
-            >
-              <img v-if="imageUrl" :src="imageUrl" class="avatar">
-              <i v-else class="el-icon-circle-plus avatar-uploader-icon"></i>
-              <p>上传</p>
-            </el-upload>
+            <el-input v-model="companyForm.com_name" class="width408" placeholder="请输入企业名称"></el-input>
           </el-form-item>
           <el-form-item label="营业执照">
             <el-upload
@@ -35,18 +19,28 @@
               :show-file-list="false"
               :http-request="uploadLicense"
             >
-              <img v-if="license_img" :src="license_img" class="avatar">
+              <img v-if="license_img" :src="license_img" class="avatar" />
               <i v-else class="el-icon-circle-plus avatar-uploader-icon"></i>
-              <p>上传</p>
+              <p>上传营业执照</p>
             </el-upload>
           </el-form-item>
-          <el-form-item label="从事行业" prop="industry">
-            <el-select v-model="companyForm.com_sort" class="width408" placeholder="请选择企业从事行业">
+          <el-form-item label="所属地区" required>
+            <div class="width408">
+              <districtSelet @change="change"></districtSelet>
+            </div>
+            <el-input
+              v-model="companyForm.address"
+              class="width408 team-address"
+              placeholder="请填写详细地址"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="所属行业" prop="industry" required>
+            <el-select v-model="companyForm.industry" class="width408" placeholder="请选择企业从事行业">
               <el-option :label="item" :value="key" v-for="(item,key) in jobList" :key="key"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="企业性质" prop="enterprise">
-            <el-select v-model="companyForm.com_type" class="width408" placeholder="请选择企业性质">
+          <el-form-item label="企业性质" prop="enterprise" required>
+            <el-select v-model="companyForm.enterprise" class="width408" placeholder="请选择企业性质">
               <el-option
                 :label="item"
                 :value="index+1"
@@ -55,8 +49,8 @@
               ></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="企业规模" prop="scale">
-            <el-select v-model="companyForm.com_scale" class="width408" placeholder="请选择企业规模">
+          <el-form-item label="企业规模" prop="scale" required>
+            <el-select v-model="companyForm.scale" class="width408" placeholder="请选择企业规模">
               <el-option
                 :label="item"
                 :value="index+1"
@@ -65,31 +59,7 @@
               ></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="公司地址" required>
-            <div class="width408">
-              <districtSelet @change="change" :address="address"></districtSelet>
-            </div>
-            <el-input
-              v-model="companyForm.address"
-              class="width408 team-address"
-              placeholder="请填写详细地址"
-            ></el-input>
-          </el-form-item>
-          <el-form-item label="联系人">
-            <el-input v-model="companyForm.link_man" class="width408" placeholder="请输入联系人姓名"></el-input>
-          </el-form-item>
-          <el-form-item label="联系电话">
-            <el-input v-model="companyForm.link_phone" class="width408" placeholder="请输入联系人姓名"></el-input>
-          </el-form-item>
-          <el-form-item label="公司座机" prop="desc">
-            <div class="x-flex-start-justify width408">
-              <el-input type="text" class="width60" v-model="landlineStart" placeholder="区号"></el-input>
-              <span class="landline"></span>
-              <el-input type="text" class="width150" v-model="landlineEnd" placeholder="座机号码"></el-input>
-              <span class="landline-tip">如：021-66041618</span>
-            </div>
-          </el-form-item>
-          <el-form-item label="企业简介" prop="introduction">
+           <el-form-item label="企业简介" prop="introduction" required>
             <el-input
               type="textarea"
               class="width408"
@@ -97,6 +67,15 @@
               v-model="companyForm.introduction"
               placeholder="请输入企业简介"
             ></el-input>
+          </el-form-item>
+          <el-form-item label="联系人" required>
+            <el-input v-model="companyForm.user_name" class="width408" placeholder="请输入联系人"></el-input>
+          </el-form-item>
+          <el-form-item label="联系人电话" required>
+            <el-input v-model="companyForm.user_name" class="width408" placeholder="联系人电话"></el-input>
+          </el-form-item>
+          <el-form-item label="邮箱">
+            <el-input v-model="companyForm.email" class="width408" placeholder="请输入邮箱"></el-input>
           </el-form-item>
           <el-form-item class="teamMessage-btn">
             <el-button type="primary" @click="submitForm('companyForm')">保存</el-button>
@@ -107,101 +86,61 @@
     </div>
   </div>
 </template>
-
 <script>
-import { getConstant } from '../../api/dictionary'
+import { getConstant } from '@/api/dictionary'
 import districtSelet from '../districtSelet'
-import userCard from '../userCard'
-import { getCompanyInfo, companyEdit, reset_password } from '../../api/company'
-import { uploadFile } from '../../api/upload'
+import { edit_team, getTeamInfo } from '@/api/team'
+import { uploadFile } from '@/api/upload'
 export default {
   components: {
-    districtSelet,
-    userCard
+    districtSelet
   },
-  data() {
+  data () {
     return {
-      address: [],
       companyForm: {
-        type: 1
+        type: 1,
+        email: ''
       },
-      imageUrl: '',
       license_img: '',
-      landlineStart: '',
-      landlineEnd: '',
       rules: {
-        team_name: [
-          { required: false, message: '请输入团队名称', trigger: 'blur' }
+        com_name: [
+          { required: true, message: '请输入企业名称', trigger: 'blur' }
         ],
         industry: [
-          { required: false, message: '请选择从事行业', trigger: 'blur' }
+          { required: true, message: '请选择从事行业', trigger: 'blur' }
         ]
       },
       comScaleList: [],
       comTypeList: [],
       jobList: {},
-      companyTeamId: ''
     };
   },
-  created() {
-    console.log(this.$route.query)
-    this.companyTeamId = this.$route.query.uid
+  created () {
     let params = 'com_type,com_scale,job_array'
     this.getList(params)
-    this.getInfo(this.companyTeamId)
+    if (this.$route.query.id) {
+       this.companyForm.id = this.$route.query.id
+       this.getInfo(this.companyForm.id)
+    }
   },
   methods: {
-    getList(filed) {
+    getList (filed) {
       getConstant({ filed }).then(res => {
-        console.log(res, 'res')
-        console.log(res.data, 'res.data')
         const { com_scale, com_type, job_array } = res.data
         this.comScaleList = com_scale
         this.comTypeList = com_type
         this.jobList = job_array
       })
     },
-    resetPassword() {
-      let uid = this.companyForm.uid
-      reset_password({ uid }).then(res => {
-        this.$message.success('重置成功')
-      }).catch(error => {
-        this.$message.error('重置失败')
-      })
-    },
-    getInfo(uid) {
-      getCompanyInfo({ uid }).then(res => {
-        this.companyForm = res.data
-        if (res.data.provinceid) {
-          let provinceid = res.data.provinceid + ''
-          let cityid = res.data.cityid + ''
-          let three_cityid = res.data.three_cityid + ''
-          this.address = [provinceid, cityid, three_cityid]
-          console.log(this.address, 'this.address')
-        }
-        if (res.data.link_tel) {
-          let link = res.data.link_tel.split('-')
-          if (link.length) {
-            this.landlineStart = link[0]
-            this.landlineEnd = link[1]
-          }
+    getInfo (id) {
+      getTeamInfo({ id }).then(res => {
+        if (res.data) {
+          this.personalForm = res.data || {}
+          this.address.push(this.personalForm.provinceid, this.personalForm.cityid, this.personalForm.three_cityid)
         }
       })
     },
-    upload(params) {
-      console.log(params, 'params')
-      const _file = params.file;
-      const isLt2M = _file.size / 1024 / 1024 < 2;
-      if (!isLt2M) {
-        this.$message.error("请上传2M以下的.xlsx文件");
-        return false;
-      }
-      uploadFile(_file).then(res => {
-        this.imageUrl = this.getImg(_file)
-        this.companyForm.log = res.data.url
-      })
-    },
-    getImg(file) {
+    getImg (file) {
       let url = null;
       if (window.createObjectURL != undefined) {
         url = window.createObjectURL(_file)
@@ -212,7 +151,7 @@ export default {
       }
       return url;
     },
-    uploadLicense(params) {
+    uploadLicense (params) {
       const _file = params.file;
       const isLt2M = _file.size / 1024 / 1024 < 2;
       if (!isLt2M) {
@@ -224,22 +163,17 @@ export default {
         this.companyForm.license_img = res.data.url
       })
     },
-    change(val) {
+    change (val) {
       this.companyForm.provinceid = val[0]
       this.companyForm.cityid = val[1]
       this.companyForm.three_cityid = val[2]
     },
-
-    submitForm(companyForm) {
-      this.companyForm.landline = this.landlineStart + '-' + this.landlineEnd
+    submitForm (companyForm) {
       this.$refs[companyForm].validate((valid) => {
-        console.log(valid, 'validdd')
         if (valid) {
-          companyEdit(this.companyForm).then(res => {
+          edit_team(this.companyForm).then(res => {
             if (res.status.code == 200) {
-              this.$message.success('修改成功')
-              this.$router.go(-1)
-              // this.$router.push('userlist')
+              this.$router.push('userlist')
             }
           })
         } else {
@@ -247,7 +181,7 @@ export default {
         }
       });
     },
-    resetForm(companyForm) {
+    resetForm (companyForm) {
       this.$refs[companyForm].resetFields()
     }
   }
@@ -366,5 +300,10 @@ export default {
     font-size: 14px;
     color: #999;
   }
+}
+.x-flex-start-justify {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 }
 </style>

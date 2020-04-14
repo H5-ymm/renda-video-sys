@@ -1,14 +1,14 @@
 <template>
   <div class="tables-box">
-    <div class="table-list team-forum">
+    <div class="table-list team-form">
       <el-form :model="formParams" class="demo-form-inline" :inline="true">
-        <el-form-item label="招聘会名称:">
+        <el-form-item label="招聘会名称">
           <el-input
             class="width200"
             v-model="formParams.name"
             placeholder="请输入账户名称"></el-input>
         </el-form-item>
-        <el-form-item label="状态:">
+        <el-form-item label="状态">
           <el-select v-model="formParams.status" class="width200">
             <el-option label="待举办" value="0"></el-option>
             <el-option label="进行中" value="1"></el-option>
@@ -21,7 +21,7 @@
         </el-form-item>
       </el-form>
       <div class="table-query">
-        <el-button type="primary" class="select-btn" icon="el-icon-plus">发布</el-button>
+        <el-button type="primary" class="select-btn" icon="el-icon-plus" @click="addJobFair">发布</el-button>
         <el-button>删除</el-button>
         <span class="select-text">
           已选择
@@ -51,7 +51,7 @@
         </el-table-column>
         <el-table-column label="操作" align="center" width="160">
           <template slot-scope="scope">
-            <el-button @click="handleDetail(scope.row)" type="text" size="small">查看企业</el-button>
+            <el-button @click="viewCompany(scope.row)" type="text" size="small">查看企业</el-button>
             <el-button @click="handleDetail(scope.row)" type="text" size="small">编辑</el-button>
             <el-button @click="handleDel(scope.row)" type="text" size="small">删除</el-button>
           </template>
@@ -64,7 +64,7 @@
         :current-page="formParams.page"
         :page-sizes="[10, 30, 50, 100]"
         :page-size="formParams.limit"
-        layout="total, sizes, prev, pager, next, jumper"
+        layout="total, sizes, prev, pager, next"
         :total="total"
       ></el-pagination>
     </div>
@@ -106,6 +106,11 @@ export default {
     this.getList(this.formParams)
   },
   methods: {
+    addJobFair() {
+      let arr = ['招聘会列表','发布招聘会']
+      sessionStorage.setItem('menus', JSON.stringify(arr))
+      this.$router.push('/jobFairForm')
+    },
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
@@ -147,7 +152,8 @@ export default {
     getList (formParams) {
       getDiscussList(formParams).then(res => {
         this.tableData = res.data.data || []
-        this.total = res.data.total
+        this.total = res.data.count
+        console.log(this.total)
       }).catch(error => {
         this.$message.error(error.status.remind)
       })
@@ -160,8 +166,13 @@ export default {
         return obj.label
       }
     },
+    viewCompany(val) {
+      let arr = ['招聘会列表','参会企业']
+      sessionStorage.setItem('menus', JSON.stringify(arr))
+      this.$router.push({ path: '/companyAccount', query: { id: val.id } })
+    },
     handleDetail (val) {
-      this.$router.push({ path: 'detailCard', query: { id: val.id } })
+      this.$router.push({ path: '/jobFairForm', query: { id: val.id } })
     },
     handleDel (val) {
       this.$confirm('请确定已与企业沟通删除后信息无法恢复！', '确定要删除招聘会吗？', {
@@ -183,23 +194,4 @@ export default {
 
 <style lang="scss">
  @import '../../assets/css/table-list';
- #app{
-   height: 100%;
- }
- .el-container{
-   height: 100%;
- }
- .el-container,.is-vertical{
-   height: 100%;
- }
- .table-query {
-  margin-bottom: 20px;
-  .select-text {
-  margin-left: 20px;
-  }
- }
- .table-list{
-  height: 100%;
-   overflow: auto;
- }
 </style>

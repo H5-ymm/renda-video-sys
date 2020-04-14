@@ -216,13 +216,11 @@
 <script>
 import { getConstant } from '@/api/dictionary'
 import districtSelet from '../districtSelet'
-import userCard from '../userCard'
 import { edit_team, getTeamInfo } from '@/api/team'
 import { uploadFile } from '@/api/upload'
 export default {
   components: {
-    districtSelet,
-    userCard
+    districtSelet
   },
   data () {
     return {

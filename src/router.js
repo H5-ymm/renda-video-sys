@@ -1,16 +1,15 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Load from './views/Load.vue'  //登录页
-const Team  = resolve => (require(['./views/Team.vue'], resolve))
+const Load  = resolve => (require(['./views/Load.vue'], resolve))
+const viewMain  = resolve => (require(['./views/viewMain.vue'], resolve))
 const jobFairList  = resolve => (require(['./components/jobFair/list.vue'], resolve))
+const jobFairForm  = resolve => (require(['./components/jobFair/jobFairForm.vue'], resolve))
 const checkJobList  = resolve => (require(['./components/jobFair/checkJobList.vue'], resolve))
 const applicant  = resolve => (require(['./components/account/applicant.vue'], resolve))
 const companyAccount  = resolve => (require(['./components/account/company.vue'], resolve))
 const addUser  = resolve => (require(['./components/account/addUser.vue'], resolve))
-const companyForm  = resolve => (require(['./components/teamMessage/companyForm.vue'], resolve))
-import DetailCard from './components/commentCard/DetailCard.vue'
-import Report from './components/Report.vue' //反馈
-
+const companyForm  = resolve => (require(['./components/jobFair/companyForm.vue'], resolve))
+const Report  = resolve => (require(['./components/Report.vue'], resolve))
 Vue.use(Router)
 
 let routers = new Router({
@@ -24,9 +23,9 @@ let routers = new Router({
     }
     },
     {
-      path: '/team',
-      name: 'Team',
-      component: Team,
+      path: '/viewMain',
+      name: 'viewMain',
+      component: viewMain,
       redirect: '/jobFairList',
       children: [
         {
@@ -48,10 +47,10 @@ let routers = new Router({
           }
         },
         {
-          path: '/detailCard',
-          name: 'DetailCard',
-          component: DetailCard,
-          title: '论坛详情',
+          path: '/jobFairForm',
+          name: 'jobFairForm',
+          component: jobFairForm,
+          title: '发布视频会',
           meta: {
             requiresAuth: 2
           }

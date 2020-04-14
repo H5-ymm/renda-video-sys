@@ -1,6 +1,5 @@
 .tables-box {
   overflow: hidden;
-
   margin-bottom: 10px;
 
   &.team-list-box {
@@ -9,7 +8,8 @@
   }
 
   .table-list {
-    height: 90%;
+    height: 100%;
+    overflow: auto;
     background: #fff;
     border-radius: 5px;
     padding: 15px;
@@ -18,7 +18,12 @@
       height: calc(100% - 80px);
     }
   }
-
+  .table-query {
+    margin-bottom: 20px;
+    .select-text {
+    margin-left: 20px;
+    }
+  }
   .team-list {
     background: #fff;
     border-radius: 5px;

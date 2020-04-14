@@ -125,17 +125,14 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          console.log(this.loginForm)
           this.$store.dispatch('user/login', this.loginForm).then(() => {
-            console.log(1)
-            this.$router.push({ path: this.redirect || '/team' })
+            this.$router.push({ path: this.redirect || '/viewMain' })
             this.loading = false
           }).catch((error) => {
             this.$message.error(error.status.remind)
             this.loading = false
           })
         } else {
-          console.log('error submit!!')
           return false
         }
       })

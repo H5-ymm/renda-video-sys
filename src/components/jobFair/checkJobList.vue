@@ -1,14 +1,14 @@
 <template>
   <div class="tables-box">
-    <div class="table-list team-forum">
+    <div class="table-list team-form">
       <el-form :model="formParams" class="demo-form-inline" :inline="true">
-        <el-form-item label="企业名称:">
+        <el-form-item label="企业名称">
           <el-input
             class="width200"
             v-model="formParams.name"
-            placeholder="请输入账户名称"></el-input>
+            placeholder="请输入企业名称"></el-input>
         </el-form-item>
-        <el-form-item label="状态:">
+        <el-form-item label="状态">
           <el-select v-model="formParams.status" class="width200">
             <el-option label="待举办" value="0"></el-option>
             <el-option label="进行中" value="1"></el-option>
@@ -60,7 +60,7 @@
         :current-page="formParams.page"
         :page-sizes="[10, 30, 50, 100]"
         :page-size="formParams.limit"
-        layout="total, sizes, prev, pager, next, jumper"
+        layout="total, sizes, prev, pager, next"
         :total="total"
       ></el-pagination>
     </div>
@@ -137,7 +137,7 @@ export default {
     getList (formParams) {
       getDiscussList(formParams).then(res => {
         this.tableData = res.data.data || []
-        this.total = res.data.total
+        this.total = res.data.count
       }).catch(error => {
         this.$message.error(error.status.remind)
       })
@@ -179,23 +179,4 @@ export default {
 
 <style lang="scss">
  @import '../../assets/css/table-list';
- #app{
-   height: 100%;
- }
- .el-container{
-   height: 100%;
- }
- .el-container,.is-vertical{
-   height: 100%;
- }
- .table-query {
-   margin-bottom: 20px;
-   .select-text {
-    margin-left: 20px;
-   }
- }
- .table-list{
-  height: 100%;
-   overflow: auto;
- }
 </style>

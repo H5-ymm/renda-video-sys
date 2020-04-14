@@ -95,8 +95,6 @@ export default {
 .team-main-view {
   width: 100vw;
   height: 100vh;
-  /* overflow-y: hidden; */
-  /* overflow: auto; */
   overflow: hidden;
   position: relative;
   .unRead {
@@ -113,14 +111,18 @@ export default {
   padding: 0 38px;
 }
 .team-aside {
-  /* height: 100vh; */
   overflow: hidden;
 }
 .team-main {
   height: 100vh;
-  /* overflow: hidden; */
   background: #f0f2f5;
   padding: 30px;
   box-sizing: border-box;
 }
+ .el-container{
+   height: 100%;
+ }
+ .el-container,.is-vertical{
+   height: 100%;
+ }
 </style>
