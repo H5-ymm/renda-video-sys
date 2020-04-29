@@ -7,9 +7,8 @@ const $axios = axios.create({
 // const baseURL1 = process.env.VUE_APP_URL + '/index.php'
 // const baseURL = process.env.VUE_APP_URL + '/admin.php'
 // const baseExportURL = process.env.VUE_APP_URL + '/uploads/test/'
-const baseURL1 = 'http://tiantianxsg.com:39888/index.php'
-const baseURL = 'http://tiantianxsg.com:39888/admin.php'
-const baseExportURL = 'http://tiantianxsg.com:39888/uploads/test/'
+const baseURL = 'http://www.ttxsg.com.cn:39009/admin.php'
+const baseExportURL = 'http://www.ttxsg.com.cn:39009/uploads/test/'
 
 //请求拦截
 $axios.interceptors.request.use(
@@ -19,7 +18,7 @@ $axios.interceptors.request.use(
     // 此处应根据具体业务写token
     const token = localStorage.getItem('sys_token');
     if (localStorage.getItem('sys_token')) {
-      config.headers['HTTP_TOKEN'] = token
+      // config.headers['HTTP_TOKEN'] = token
       // config.headers['HTTP-USERID'] = 6
     }
     config.headers = {
@@ -42,7 +41,6 @@ $axios.interceptors.response.use(
     } else {
       return Promise.reject(response);
     }
-    // return Promise.resolve(response); 
   },
   // 服务器状态码不是200的情况 
   error => {
@@ -123,7 +121,7 @@ export function upload (params) {
   let file = new FormData()
   file.append('image', params)
   return new Promise((resolve, reject) => {
-    $axios.post(`${baseURL1}/uploadimg/moreupload`, file)
+    $axios.post(`${baseURL}/tool/moreupload`, file)
       .then(res => {
         resolve(res.data)
       })
@@ -134,7 +132,7 @@ export function upload (params) {
 }
 export function getData (url, params) {
   return new Promise((resolve, reject) => {
-    $axios.post(`${baseURL1}${url}${'?' + QS.stringify(params)}`)
+    $axios.post(`${baseURL}${url}${'?' + QS.stringify(params)}`)
       .then(res => {
         resolve(res.data)
       })

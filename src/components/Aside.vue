@@ -36,7 +36,6 @@
 </template>
 
 <script>
-import { getRole } from '../api/user'
 export default {
   name: 'Aside',
   props: {
@@ -82,6 +81,16 @@ export default {
               url: '/Report'
             }
           ]
+        },
+        {
+          title: '网站设置',
+          icon: 'el-icon-setting',
+          submenu: [
+            {
+              title: '广告设置',
+              url: '/ADSetting'
+            }
+          ]
         }
       ],
       title: '',
@@ -90,9 +99,7 @@ export default {
     }
   },
   created() {
-    getRole({ uid: this.uid }).then(res => {
-      console.log(res)
-    })
+
   },
   methods: {
     handleOpen(key, keyPath) {
@@ -107,7 +114,6 @@ export default {
       this.$router.push('/load')
     },
     selectMenus(key, keyPath) {
-      console.log(key, keyPath)
       this.title = key
       let arr = this.getMenusTitle(key, this.menus)
       sessionStorage.setItem('menus', JSON.stringify(arr))

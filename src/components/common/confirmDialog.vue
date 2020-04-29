@@ -3,10 +3,10 @@
     <el-form :model="form" class="lock-form">
       <el-form-item :label="`审核结果`">
         <el-radio-group v-model="form.status">
-          <el-radio :label="item.value" v-for="(item, index) in labelList" :key="index" @change="choose_change">{{item.label}}</el-radio>
+          <el-radio :label="item.value" v-for="item in labelList" :key="item.value" @change="choose_change">{{item.label}}</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item :label="`拒绝理由`" v-if="form.status==3">
+      <el-form-item :label="`拒绝理由`" v-if="form.status==2">
         <el-input type="textarea" :autosize="{ minRows: 3, maxRows: 2}" v-model="form.reason"></el-input>
       </el-form-item>
     </el-form>
@@ -19,7 +19,7 @@
 
 <script>
 export default {
-  props: ['dialogVisible', 'objRow', 'infoObj'],
+  props: ['dialogVisible', 'objRow'],
   data () {
     return {
       form: {
@@ -28,10 +28,18 @@ export default {
       },
       dialogType: '审核',
       labelList: [{
-        label: '通过', value: 2
+        label: '通过', value: 1
       }, {
-        label: '不通过', value: 3
+        label: '不通过', value: 2
       }]
+    }
+  },
+  watch: {
+    objRow(val) {
+      console.log(val)
+      if (val) {
+        this.form = val
+      }
     }
   },
   methods: {
@@ -47,7 +55,6 @@ export default {
       }
     },
     choose_change (v) {
-      console.log(v, 222)
       this.form.status = v
     }
   }

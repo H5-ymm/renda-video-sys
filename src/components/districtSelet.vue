@@ -2,8 +2,7 @@
   <el-cascader v-model="districtList" :placeholder="placeholder" :options="options" clearable :props="props" ref="cascader" class="cascader" @change="changeData" @expand-change="handleItemChange"></el-cascader>
 </template>
 <script>
-import { getProvincesList, getCitysList, getAreasList } from '../api/company'
-import { cityList } from '../base/base'
+import { getProvincesList } from '@/api/dictionary'
 export default {
   props: {
     disabled: false,
@@ -16,11 +15,10 @@ export default {
       options: [],
       districtList: [],
       props: {
-        value: 'code',
-        label: 'name',
+        value: 'id',
+        label: 'area_name',
         children: 'children'
       },
-      cityList,
       list: [],
       arr: [],
       list1: []
@@ -33,20 +31,17 @@ export default {
     }
     else {
       this.getRegion(this.address)
-      this.districtList = this.address.map(item => { return item + '' })
+      this.districtList = this.address
     }
   },
   watch: {
     address: {
       handler (val, oldVal) {
-        console.log(val)
         if (val.length) {
           this.getRegion(val)
           setTimeout(() => {
-            this.districtList = this.address.map(item => { return item + '' })
+            this.districtList = this.address
           }, 1000)
-          // this.getRegion(val)
-          // this.districtList = this.address.map(item => { return item + '' })
         }
         else {
           this.getRegion([])
@@ -62,38 +57,12 @@ export default {
     },
     getProlist (list) {
       return list.map(item => {
-        let obj =
-          {
-            code: item.provinceid,
-            name: item.province,
-            children: []
-          }
-        return obj
-      })
-    },
-    getProlist1 (list) {
-      return list.map(item => {
-        let obj =
-          {
-            code: item.code,
-            name: item.name,
-            children: []
-          }
-        return obj
-      })
-    },
-    getList (list) {
-      return list.map(item => {
-        let obj =
-          {
-            code: item.code,
-            name: item.name
-          }
-        return obj
+        item.children = []
+        return item
       })
     },
     getRegion (value) {
-      getProvincesList().then(res => {
+      getProvincesList({parentId: ''}).then(res => {
         let arr = this.getProlist(res.data)
         this.options = arr
         this.getCityList(value)
@@ -107,17 +76,17 @@ export default {
       else {
         code = value[0]
       }
-      getCitysList({ code }).then(res => {
+      getProvincesList({ parentId: code }).then(res => {
         let arr = []
         if (!this.disabled) {
-          arr = this.getProlist1(res.data)
+          arr = this.getProlist(res.data)
           this.getAreaList(value)
         }
         else {
-          arr = this.getList(res.data)
+          arr = res.data
         }
         this.options.forEach(item => {
-          if (item.code == code) {
+          if (item.id == code) {
             item.children = arr
             return false
           }
@@ -132,15 +101,15 @@ export default {
       else {
         code = value[1]
       }
-      getAreasList({ code }).then(res => {
+      getProvincesList({ parentId: code }).then(res => {
         let arr = res.data
         this.options.forEach(item => {
-          if (item.code == value[0]) {
-            this.list.push(item.name)
+          if (item.id == value[0]) {
+            this.list.push(item.area_name)
             if (item.children.length) {
               item.children.forEach(val => {
-                if (val.code == code) {
-                  this.list.push(val.name)
+                if (val.id == code) {
+                  this.list.push(val.area_name)
                   val.children = arr
                   this.arr = arr
                 }
@@ -153,8 +122,8 @@ export default {
     changeData (val) {
       if (this.arr.length) {
         this.arr.forEach(item => {
-          if (val[2] && item.code == val[2]) {
-            this.list.push(item.name)
+          if (val[2] && item.id == val[2]) {
+            this.list.push(item.area_name)
           }
         })
       }

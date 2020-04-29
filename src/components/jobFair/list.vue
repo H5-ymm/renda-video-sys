@@ -5,7 +5,7 @@
         <el-form-item label="招聘会名称">
           <el-input
             class="width200"
-            v-model="formParams.name"
+            v-model="formParams.where"
             placeholder="请输入账户名称"></el-input>
         </el-form-item>
         <el-form-item label="状态">
@@ -32,21 +32,22 @@
       <el-table :data="tableData" ref="multipleTable" style="width: 100%" 
         @selection-change="handleSelectionChange"
         @sort-change="sortChange">
-        <el-table-column type="selection" align="center" width="60"></el-table-column>
-        <el-table-column label="招聘会名称" prop="team_name" align="center" width="160"></el-table-column>
-        <el-table-column label="开始时间" sortable="custom" align="center" width="160">    
+          <el-table-column type="selection" align="center" width="60"></el-table-column>
+          <el-table-column label="招聘会名称" prop="title" align="center" width="160"></el-table-column>
+          <el-table-column label="开始时间"  prop="sortStart" sortable="custom" align="center" width="160"> 
+            <template slot-scope="scope">
+              <span>{{$moment.unix(scope.row.starttime).format('YYYY-MM-DD HH:ss')}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="结束时间"  prop="sortEnd" sortable="custom" align="center" width="160">
+            <template slot-scope="scope">
+              <span>{{$moment.unix(scope.row.endtime).format('YYYY-MM-DD HH:ss')}}</span>
+            </template>
         </el-table-column>
-       <el-table-column label="结束时间" sortable="custom" align="center" width="160">
-            
-      </el-table-column>
-      <el-table-column label="参会企业" align="center" min-width="160">
-          <template slot-scope="scope">
-            <span></span>
-          </template>
-        </el-table-column>
+        <el-table-column label="参会企业" align="center" prop="num" min-width="160"></el-table-column>
         <el-table-column label="状态" align="center" width="160">
-           <template slot-scope="scope">
-            <span></span>
+            <template slot-scope="scope">
+            <span class="status" :class="scope.row.now_status === 0 ? 'grayyuan': scope.row.now_status === 1 ? 'greenyuan': 'redyuan'">{{getStatus(scope.row.now_status)}}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center" width="160">
@@ -71,26 +72,21 @@
   </div>
 </template>
 <script>
-import { getDiscussList, getDiscussInfo } from '@/api/comment'
+import { getJobFairList ,deleteJobFair} from '@/api/jobFair'
 export default {
   data () {
     return {
       show: false,
       visible: false,
       tableData: [],
-      userType: 1,
-      keyword: '',
-      value: 'team_name',
       formParams: {
         limit: 10,
         page: 1,
-        name: '',
+        where: '',
         status: ''
       },
       total: 0,
-      formMember: {},
       uid: localStorage.getItem('sys_uid'),
-      commentInfo: {},
       id: '',
       multipleSelection:[],
       statusList: [
@@ -120,9 +116,9 @@ export default {
     },
     sortChange(column) {
       if (column.order == 'ascending') {
-        this.formParams.timeDesc = 'asc'
+        this.formParams[column.prop]= 'asc'
       } else {
-        this.formParams.timeDesc = 'desc'
+        this.formParams[column.prop] = 'desc'
       }
       this.getList(this.formParams)
     },
@@ -150,10 +146,9 @@ export default {
       this.getList(this.formParams)
     },
     getList (formParams) {
-      getDiscussList(formParams).then(res => {
+      getJobFairList(formParams).then(res => {
         this.tableData = res.data.data || []
         this.total = res.data.count
-        console.log(this.total)
       }).catch(error => {
         this.$message.error(error.status.remind)
       })
@@ -162,6 +157,7 @@ export default {
       let obj = this.statusList.find(item => {
         return val == item.value
       })
+      console.log(obj)
       if (obj) {
         return obj.label
       }
@@ -169,7 +165,7 @@ export default {
     viewCompany(val) {
       let arr = ['招聘会列表','参会企业']
       sessionStorage.setItem('menus', JSON.stringify(arr))
-      this.$router.push({ path: '/companyAccount', query: { id: val.id } })
+      this.$router.push({ path: '/JFcompany', query: { id: val.id } })
     },
     handleDetail (val) {
       this.$router.push({ path: '/jobFairForm', query: { id: val.id } })
@@ -180,9 +176,14 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        let uid = val.id
-        deleteUser({ uid }).then(res => {
-          this.getList(this.formParams)
+        let idlist = val.id
+        deleteJobFair({ idlist }).then(res => {
+          if(res.data) {
+            this.$message.success('删除成功')
+            this.getList(this.formParams)
+          } else {
+            this.$message.error('删除失败')
+          }
         })
       }).catch(() => {
         console.log(2)

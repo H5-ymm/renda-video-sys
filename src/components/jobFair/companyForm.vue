@@ -10,12 +10,13 @@
       >
         <section class="section-box">
           <el-form-item label="企业名称" prop="com_name">
-            <el-input v-model="companyForm.com_name" class="width408" placeholder="请输入企业名称"></el-input>
+            <el-input v-model="companyForm.com_name" :readonly="readonly" class="width408" placeholder="请输入企业名称"></el-input>
           </el-form-item>
-          <el-form-item label="营业执照">
+          <el-form-item label="营业执照" v-if="companyForm.license_url">
             <el-upload
               class="uploader-card avatar-uploader"
               action="customize"
+              :disabled="readonly"
               :show-file-list="false"
               :http-request="uploadLicense"
             >
@@ -25,32 +26,36 @@
             </el-upload>
           </el-form-item>
           <el-form-item label="所属地区" required>
-            <div class="width408">
-              <districtSelet @change="change"></districtSelet>
+            <div class="width408" v-if="!readonly">
+              <districtSelet @change="change" :address="address"></districtSelet>
+            </div>
+            <div class="width408" v-else>
+              <p class="el-input__inner">{{companyForm.provinceName}}{{companyForm.cityName}}{{companyForm.areaName}}</p >
             </div>
             <el-input
               v-model="companyForm.address"
               class="width408 team-address"
+              :readonly="readonly"
               placeholder="请填写详细地址"
             ></el-input>
           </el-form-item>
-          <el-form-item label="所属行业" prop="industry" required>
-            <el-select v-model="companyForm.industry" class="width408" placeholder="请选择企业从事行业">
-              <el-option :label="item" :value="key" v-for="(item,key) in jobList" :key="key"></el-option>
+          <el-form-item label="所属行业" prop="trades">
+            <el-select v-model="companyForm.trades" :disabled="readonly" class="width408" placeholder="请选择企业从事行业">
+              <el-option :label="item" :value="index+1" v-for="(item,index) in jobList" :key="index"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="企业性质" prop="enterprise" required>
-            <el-select v-model="companyForm.enterprise" class="width408" placeholder="请选择企业性质">
+          <el-form-item label="企业性质" prop="nature">
+            <el-select v-model="companyForm.nature" :disabled="readonly" class="width408" placeholder="请选择企业性质">
               <el-option
                 :label="item"
-                :value="index+1"
+                :value="index"
                 v-for="(item,index) in comTypeList"
                 :key="index"
               ></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="企业规模" prop="scale" required>
-            <el-select v-model="companyForm.scale" class="width408" placeholder="请选择企业规模">
+          <el-form-item label="企业规模" prop="scale">
+            <el-select v-model="companyForm.scale" :disabled="readonly" class="width408" placeholder="请选择企业规模">
               <el-option
                 :label="item"
                 :value="index+1"
@@ -59,84 +64,156 @@
               ></el-option>
             </el-select>
           </el-form-item>
-           <el-form-item label="企业简介" prop="introduction" required>
+           <el-form-item label="企业简介" prop="content">
             <el-input
               type="textarea"
               class="width408"
               :autosize="{minRows: 5}"
-              v-model="companyForm.introduction"
+              :readonly="readonly"
+              v-model="companyForm.content"
               placeholder="请输入企业简介"
             ></el-input>
           </el-form-item>
-          <el-form-item label="联系人" required>
-            <el-input v-model="companyForm.user_name" class="width408" placeholder="请输入联系人"></el-input>
+          <el-form-item label="联系人" prop="link_man">
+            <el-input v-model="companyForm.link_man" :readonly="readonly" class="width408" placeholder="请输入联系人"></el-input>
           </el-form-item>
-          <el-form-item label="联系人电话" required>
-            <el-input v-model="companyForm.user_name" class="width408" placeholder="联系人电话"></el-input>
+          <el-form-item label="联系人电话" prop="link_tel">
+            <el-input v-model="companyForm.link_tel" :readonly="readonly" class="width408" placeholder="联系人电话"></el-input>
           </el-form-item>
-          <el-form-item label="邮箱">
-            <el-input v-model="companyForm.email" class="width408" placeholder="请输入邮箱"></el-input>
+          <el-form-item label="邮箱" v-if="companyForm.email">
+            <el-input v-model="companyForm.email" :readonly="readonly" class="width408" placeholder="请输入邮箱"></el-input>
           </el-form-item>
-          <el-form-item class="teamMessage-btn">
+          <el-form-item class="teamMessage-btn" v-if="(companyForm.jfId&&!view )|| (view&&!comId)">
             <el-button type="primary" @click="submitForm('companyForm')">保存</el-button>
             <el-button @click="resetForm('companyForm')">取消</el-button>
+          </el-form-item>
+          <el-form-item class="teamMessage-btn" v-if="comId&&!view">
+            <el-button type="primary" @click="submitCheck">{{!companyForm.status ? '审核' : '已审核'}}</el-button>
           </el-form-item>
         </section>
       </el-form>
     </div>
+    <confirmDialog :dialogVisible="dialogVisible" @submit="submit" :objRow="objRow" @handleClose="dialogVisible=false;id=''"></confirmDialog>
   </div>
 </template>
 <script>
 import { getConstant } from '@/api/dictionary'
 import districtSelet from '../districtSelet'
-import { edit_team, getTeamInfo } from '@/api/team'
+import confirmDialog from '../common/confirmDialog'
+import { addFairCompanyUser, getCompanyInfo, companyCheck } from '@/api/company'
+import { seeCompanyInfo, addCompanyInfo } from '@/api/companyAccount'
 import { uploadFile } from '@/api/upload'
+import { getImgUrl } from '@/util/util'
 export default {
   components: {
-    districtSelet
+    districtSelet,
+    confirmDialog
   },
   data () {
     return {
       companyForm: {
-        type: 1,
-        email: ''
+        com_name: '',
+        email: '',
+        content: '',
+        province: '',
+        city: '',
+        area: '',
+        address: '',
+        trades: '',
+        nature: '',
+        scale: '',
+        link_man: '',
+        link_tel: '',
+        jfId: ''
       },
       license_img: '',
       rules: {
         com_name: [
           { required: true, message: '请输入企业名称', trigger: 'blur' }
         ],
-        industry: [
-          { required: true, message: '请选择从事行业', trigger: 'blur' }
+        trades: [
+          { required: true, message: '请选择所属行业', trigger: 'change' }
+        ],
+        nature: [
+          { required: true, message: '请选择企业性质', trigger: 'change' }
+        ],
+        scale: [
+          { required: true, message: '请选择企业规模', trigger: 'change' }
+        ],
+        content: [
+          { required: true, message: '请输入企业介绍', trigger: 'blur' }
+        ],
+        link_man: [
+          { required: true, message: '请输入联系人', trigger: 'blur' }
+        ],
+        link_tel: [
+          { required: true, message: '请输入联系人电话', trigger: 'blur' }
         ]
       },
       comScaleList: [],
       comTypeList: [],
-      jobList: {},
+      jobList: [],
+      comId: '',
+      id: '',
+      readonly: false,
+      dialogVisible: false,
+      address: [],
+      objRow: {},
+      view: 0
     };
   },
   created () {
     let params = 'com_type,com_scale,job_array'
     this.getList(params)
-    if (this.$route.query.id) {
-       this.companyForm.id = this.$route.query.id
-       this.getInfo(this.companyForm.id)
+    if (this.$route.query.jfId) {
+      this.companyForm.jfId = this.$route.query.jfId
+    } 
+    if (this.$route.query.comId && this.$route.query.id ) {
+      this.comId = this.$route.query.comId
+      this.id = this.$route.query.id
+      this.readonly = true
+      this.getInfo(this.comId)
+    }
+    if (this.$route.query.view) {
+      if (this.$route.query.id) {
+        this.comId = this.$route.query.id
+        this.getDetail(this.comId)
+        this.readonly = true
+      }
+      this.view = this.$route.query.view
     }
   },
   methods: {
+    getArray(obj) {
+      let arr = []
+      for (let key in obj) {
+          arr.push(obj[key])
+      }
+      return arr
+    },
     getList (filed) {
       getConstant({ filed }).then(res => {
         const { com_scale, com_type, job_array } = res.data
         this.comScaleList = com_scale
         this.comTypeList = com_type
-        this.jobList = job_array
+        this.jobList = this.getArray(job_array)
       })
     },
-    getInfo (id) {
-      getTeamInfo({ id }).then(res => {
+    getDetail(id) {
+      seeCompanyInfo({ id }).then(res => {
         if (res.data) {
-          this.personalForm = res.data || {}
-          this.address.push(this.personalForm.provinceid, this.personalForm.cityid, this.personalForm.three_cityid)
+          this.companyForm = res.data || {}
+          this.license_img = this.companyForm.license_url
+          this.address.push(this.companyForm.province, this.companyForm.city, this.companyForm.area)
+        }
+      })
+    },
+    getInfo (comId) {
+      getCompanyInfo({ comId }).then(res => {
+        if (res.data) {
+          this.companyForm = res.data || {}
+          this.license_img = this.companyForm.license_url
+          this.address.push(this.companyForm.province, this.companyForm.city, this.companyForm.area)
         }
       })
     },
@@ -160,150 +237,84 @@ export default {
       }
       uploadFile(_file).then(res => {
         this.license_img = this.getImg(_file)
-        this.companyForm.license_img = res.data.url
+        this.companyForm.license_url = getImgUrl(res.data.url)
       })
     },
     change (val) {
-      this.companyForm.provinceid = val[0]
-      this.companyForm.cityid = val[1]
-      this.companyForm.three_cityid = val[2]
+      this.companyForm.province = val[0]
+      this.companyForm.city = val[1]
+      this.companyForm.area = val[2]
+    },
+    submitCheck () {
+      if (this.companyForm.status) return
+      this.objRow.status = this.companyForm.status
+      this.dialogVisible = true
+    },
+    submit (val) {
+      if (val.status == 2) {
+        if (!val.reason) {
+          return this.$message.warning('请输入不通过原因')
+        }
+      }
+      let params = {
+        idlist: this.id,
+        status: val.status,
+        refuse: val.reason
+      }
+      companyCheck(params).then(res => {
+        this.dialogTableVisible = false
+        this.objRow = {}
+        this.companyForm.status = val.status
+      }).catch((error) => {
+        this.$message.error(error.status.remind)
+      })
+    },
+    addCompany(params){
+      addCompanyInfo(params).then(res => {
+        if (res.data) {
+          let arr = ['企业账户']
+          sessionStorage.setItem('menus', JSON.stringify(arr))
+          this.$router.push({ path: '/companyAccount'})
+        } else {
+          this.$message.error('添加失败')
+        }
+      }).catch(error =>{
+        if (error && error.status) {
+          this.$message.error(error.status.remind)
+        }        
+      })
     },
     submitForm (companyForm) {
       this.$refs[companyForm].validate((valid) => {
         if (valid) {
-          edit_team(this.companyForm).then(res => {
-            if (res.status.code == 200) {
-              this.$router.push('userlist')
-            }
-          })
+          if (this.view) {
+            this.addCompany(this.companyForm)
+          } else {
+            addFairCompanyUser(this.companyForm).then(res => {
+              if (res.data) {
+                let arr = ['招聘会列表', '参会企业']
+                sessionStorage.setItem('menus', JSON.stringify(arr))
+                this.$router.push({ path: '/JFcompany', query: { id: this.companyForm.jfId} })
+              } else {
+                this.$message.error('添加失败')
+              }
+            }).catch(error =>{
+              if (error && error.status) {
+                this.$message.error(error.status.remind)
+              }        
+           })
+          }
         } else {
           return false;
         }
       });
     },
     resetForm (companyForm) {
-      this.$refs[companyForm].resetFields()
+      this.$router.go(-1)
     }
   }
 }
 </script>
 <style lang="scss">
-.teamMessage {
-  padding-bottom: 80px;
-  height: 100%;
-  .title {
-    width: 100%;
-    height: 44px;
-    line-height: 44px;
-    font-size: 14px;
-    color: #333;
-    padding-left: 15px;
-    background: #fff;
-    box-shadow: 0px 4px 4px 0px rgba(106, 106, 106, 0.1);
-    border-radius: 5px;
-  }
-  .section-box {
-    background: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    .password-tip {
-      color: #6a6a6a;
-      margin-left: 20px;
-    }
-    .landline-tip {
-      position: absolute;
-      top: 0;
-      right: 0;
-      color: #999999;
-      font-size: 14px;
-    }
-  }
-  .manager-form-row {
-    width: 100%;
-    margin: 0 auto;
-    .teamMessage-form {
-      width: 100%;
-      font-size: 14px;
-      margin-bottom: 70px;
-      .width408 {
-        width: 408px;
-        position: relative;
-      }
-      .width60 {
-        width: 60px;
-      }
-      .width150 {
-        width: 150px;
-      }
-      .landline {
-        width: 20px;
-        height: 1px;
-        background: #6a6a6a;
-        margin: 0 10px;
-        display: inline-block;
-      }
-      .el-input__inner {
-        border: 1px solid #eee;
-      }
-      .team-address {
-        margin-top: 5px;
-      }
-    }
-    .avatar-uploader .el-upload {
-      background: #eee;
-      border-radius: 3px;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      color: #999999;
-      font-size: 14px;
-      width: 91px;
-      height: 91px;
-      > p {
-        margin-top: -10px;
-      }
-    }
-    .uploader-card {
-      display: inline-block;
-      margin-right: 20px;
-      .idcard-text {
-        color: #6a6a6a;
-        text-align: center;
-        font-size: 14px;
-      }
-    }
-    .avatar-uploader .el-upload:hover {
-      border-color: #409eff;
-    }
-    .avatar-uploader-icon {
-      font-size: 28px;
-      color: #8c939d;
-      text-align: center;
-      color: #999999;
-      font-size: 42px;
-      margin-top: 10px;
-    }
-    .avatar {
-      width: 91px;
-      height: 91px;
-      display: block;
-    }
-  }
-  .card-uploader-icon {
-    width: 162px;
-    height: 128px;
-  }
-  .idcard-tip {
-    position: absolute;
-    right: -100px;
-    top: 30px;
-    font-size: 14px;
-    color: #999;
-  }
-}
-.x-flex-start-justify {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-}
+ @import '../../assets/css/form';
 </style>

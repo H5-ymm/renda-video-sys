@@ -1,7 +1,29 @@
+<style lang="scss">
+.el-collapse {
+  border: none;
+  .el-collapse-item__header{
+    &:hover {
+      background: none;
+      border: none;
+    }
+  }
+  .el-collapse-item__header.is-active {
+    background: none;
+    border: none;
+  }
+  .el-collapse-item__wrap {
+    background: none;
+  }
+  .el-collapse-item__content {
+    text-align: left;
+  }
+}
+</style>
+
 <template>
   <div class="tables-box">
     <div class="table-list team-form">
-      <el-form :inline="true" :model="formParams" ref="formParams" class="demo-form-inline" label-width="100px">
+      <el-form :inline="true" :model="formParams" ref="formParams" class="demo-form-inline">
         <el-form-item label="账户名称">
           <el-input
             class="query-inputs width200"
@@ -18,9 +40,16 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="searCh" class="select-btn">查询</el-button>
-          <el-button type="primary" @click="reSet(formParams)">重置</el-button>
+          <el-button type="primary" @click="reSet()">重置</el-button>
         </el-form-item>
-        <div class="slot_row"></div>
+        <div class="table-query">
+        <el-button type="primary" @click="handleDel(id)">删除</el-button>
+        <span class="select-text">
+          已选择
+          <el-button type="text">{{multipleSelection.length}}&nbsp;</el-button>项
+        </span>
+        <el-button type="text" @click="toggleSelection()">清空</el-button>
+      </div>
       </el-form>
         <el-table
         :data="tableData"
@@ -41,33 +70,44 @@
           >
         </el-table-column>
         <el-table-column
-          prop="desired_position"
           label="反馈内容"
           min-width="180"
           align="center"
           >
+          <template slot-scope="scope">
+            <el-collapse accordion>
+              <el-collapse-item>
+                <template slot="title">
+                  {{getText(scope.row.content)}}
+                </template>
+                <div>{{scope.row.content}}</div>
+              </el-collapse-item>
+            </el-collapse>
+          </template>
         </el-table-column>
         <el-table-column
-          prop="mobile"
+          prop="tel"
           label="手机号码"
           width="160"
           align="center"
           >
         </el-table-column>    
         <el-table-column
-          prop="money"
           label="反馈时间"
           width="160"
           sortable="custom"
           align="center"
           >
+          <template slot-scope="scope">
+            <span>{{$moment.unix(scope.row.addtime).format('YYYY-MM-DD HH:ss')}}</span>
+          </template>
         </el-table-column>
         <el-table-column
           label="操作"
           width="150"
           show-overflow-tooltip>
           <template slot-scope="scope">
-            <el-button @click="handleDel(scope.row)" type="text" size="small">删除</el-button>
+            <el-button @click="handleDel(scope.row.id)" type="text" size="small">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -85,19 +125,11 @@
   </div>
 </template>
 <script>
-  import { feedbackList, gainFeedbackInfo, doFeedbackInfo } from '../api/report'
+  import { feedbackList, doFeedbackInfo } from '@/api/report'
   export default {
     data () {
       return {
         tableData: [],
-        reportlist:{
-          user: 'alfie',
-          phone: 15765692066,
-          date: 1576569206,
-          reason: "违规",
-          deal_per: "ren",
-          deal_result: 'wqefgergberiogh7r8bgvr',
-        },
         formParams: {
           uid: localStorage.getItem('sys_uid'),
           limit: 10,
@@ -105,18 +137,22 @@
         },
         total: 0,
         id: '',
-        multipleSelection: []
+        multipleSelection: [],
+        isShowTitle: true
       }
     },
     created () {
       this.getList(this.formParams)
     },
     methods: {
+      getText(text) {
+        return text.length > 10 ? text.substring(0, 10): text
+      },
       sortChange(column) {
         if (column.order == 'ascending') {
-          this.formParams.timeDesc = 'asc'
+          this.formParams.sortTime = 'asc'
         } else {
-          this.formParams.timeDesc = 'desc'
+          this.formParams.sortTime = 'desc'
         }
         this.getList(this.formParams)
       },
@@ -145,18 +181,27 @@
           this.$message.error(error.status.remind)
         })
       },
-      handleDel (val) {
+      handleDel (idlist) {
+        if (!idlist) {
+          return this.$message.warning('请选择删除的反馈意见')
+        }
         this.$confirm('确定要删除吗?', '', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          let uid = val.id
-          deleteUser({ uid }).then(res => {
-            this.getList(this.formParams)
+          doFeedbackInfo({ idlist }).then(res => {
+            if(res.data) {
+              this.$message.success('删除成功')
+              this.getList(this.formParams)
+            } else {
+              this.$message.error('删除失败')
+            }
           })
-        }).catch(() => {
-          console.log(2)
+        }).catch(error =>{
+          if (error && error.status) {
+            this.$message.error(error.status.remind)
+          } 
         })
       },
       toggleSelection (rows) {
@@ -170,10 +215,15 @@
       },
       handleSelectionChange(val) {
         this.multipleSelection = val;
+        this.id = val.map(item => item.id).join(',')
       },
-      reSet (formParams) {
-        this.formParams.teamName = '';
-        this.formParams.mobile = ''
+      reSet () {
+        this.formParams={
+          uid: localStorage.getItem('sys_uid'),
+          limit: 10,
+          page: 1
+        }
+        this.getList(this.formParams)
       }
     }
   }

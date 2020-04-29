@@ -4,10 +4,12 @@ const Load  = resolve => (require(['./views/Load.vue'], resolve))
 const viewMain  = resolve => (require(['./views/viewMain.vue'], resolve))
 const jobFairList  = resolve => (require(['./components/jobFair/list.vue'], resolve))
 const jobFairForm  = resolve => (require(['./components/jobFair/jobFairForm.vue'], resolve))
+const JFcompany  = resolve => (require(['./components/jobFair/JFcompany.vue'], resolve))
 const checkJobList  = resolve => (require(['./components/jobFair/checkJobList.vue'], resolve))
+const jobDetail  = resolve => (require(['./components/jobFair/jobDetail.vue'], resolve))
 const applicant  = resolve => (require(['./components/account/applicant.vue'], resolve))
 const companyAccount  = resolve => (require(['./components/account/company.vue'], resolve))
-const addUser  = resolve => (require(['./components/account/addUser.vue'], resolve))
+const ADSetting  = resolve => (require(['./components/ADSetting.vue'], resolve))
 const companyForm  = resolve => (require(['./components/jobFair/companyForm.vue'], resolve))
 const Report  = resolve => (require(['./components/Report.vue'], resolve))
 Vue.use(Router)
@@ -47,6 +49,15 @@ let routers = new Router({
           }
         },
         {
+          path: '/jobDetail',
+          name: 'jobDetail',
+          component: jobDetail,
+
+          meta: {
+            requiresAuth: 2
+          }
+        },
+        {
           path: '/jobFairForm',
           name: 'jobFairForm',
           component: jobFairForm,
@@ -55,7 +66,15 @@ let routers = new Router({
             requiresAuth: 2
           }
         },
-        { // 基本设置
+        {
+          path: '/JFcompany',
+          name: 'JFcompany',
+          component: JFcompany,
+          meta: {
+            requiresAuth: 2
+          }
+        },
+        {
           path: '/companyForm',
           name: 'companyForm',
           component: companyForm,
@@ -82,8 +101,8 @@ let routers = new Router({
           ]
         },
         {
-          path: '/addUser',  //添加用户
-          component: addUser,
+          path: '/ADSetting',  //添加用户
+          component: ADSetting,
           meta: {
             requiresAuth: 2
           }

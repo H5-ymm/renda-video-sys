@@ -5,14 +5,14 @@
         <el-form-item label="企业名称">
           <el-input
             class="width200"
-            v-model="formParams.name"
+            v-model="formParams.companyName"
             placeholder="请输入企业名称"></el-input>
         </el-form-item>
         <el-form-item label="状态">
           <el-select v-model="formParams.status" class="width200">
-            <el-option label="待举办" value="0"></el-option>
-            <el-option label="进行中" value="1"></el-option>
-            <el-option label="已结束" value="2"></el-option>
+            <el-option label="待审核" value="0"></el-option>
+            <el-option label="已通过" value="1"></el-option>
+            <el-option label="已拒绝" value="2"></el-option>
           </el-select>
         </el-form-item>
          <el-form-item>
@@ -31,18 +31,18 @@
       </div>
       <el-table :data="tableData" ref="multipleTable" style="width: 100%" @selection-change="handleSelectionChange">
         <el-table-column type="selection" align="center" width="60"></el-table-column>
-        <el-table-column label="招聘会名称" prop="team_name" align="center" width="160"></el-table-column>
-        <el-table-column label="参会企业" align="center" min-width="160">
-          <template slot-scope="scope">
-            <span></span>
+        <el-table-column label="职位展示位置" align="center" width="160">
+          <template slot-scope="props">
+             <span>{{props.row.exhibiton === 1 ?'招聘会':props.row.status === 2?'宣讲会': '招聘会/宣讲会'}}</span>
           </template>
         </el-table-column>
-         <el-table-column label="发布职位" align="center" width="160">      
+        <el-table-column label="参会企业" align="center" prop="com_name" min-width="160">
+        </el-table-column>
+         <el-table-column label="发布职位" align="center" prop="job_name" width="160">      
         </el-table-column>
         <el-table-column label="状态" align="center" width="160">
-           <template slot-scope="scope">
-            <p :class="scope.row.status === 0 ? 'grayyuan': scope.row.status === 1 ? 'greenyuan': 'redyuan'"></p>
-            待举办
+          <template slot-scope="props">
+             <span class="status" :class="props.row.status === 0 ? 'grayyuan': props.row.status === 1 ? 'greenyuan': 'redyuan'">{{props.row.status === 0 ?'待审核':props.row.status === 1?'已通过': '已拒绝'}}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center" width="160">
@@ -69,7 +69,7 @@
 </template>
 <script>
 import confirmDialog from '../common/confirmDialog'
-import { getDiscussList, getDiscussInfo } from '@/api/comment'
+import { getJobList, trialFairJob } from '@/api/job'
 export default {
   components: {
     confirmDialog
@@ -81,7 +81,6 @@ export default {
       formParams: {
         limit: 10,
         page: 1,
-        name: '',
         status: ''
       },
       total: 0,
@@ -93,7 +92,8 @@ export default {
         {label: '进行中', value: 1},
         {label: '已结束', value: 2}
       ],
-      objRow: {}
+      objRow: {},
+      idlist: ''
     }
   },
   created () {
@@ -103,13 +103,34 @@ export default {
   methods: {
     handleSelectionChange(val) {
       this.multipleSelection = val
+      this.idlist = val.map(item => item.id).join(',')
     },
     toggleSelection() {
       this.multipleSelection = []
+      this.idlist =''
       this.$refs.multipleTable.clearSelection();
     },
-    submit() {
-
+    submit (val) {
+      if (val.status == 2) {
+        if (!val.reason) {
+          return this.$message.warning('请输入不通过原因')
+        }
+      }
+      let params = {
+        idList: this.idlist,
+        status: val.status,
+        content: val.reason || ''
+      }
+      this.submitCheck(params)
+    },
+    submitCheck (val) {
+      trialFairJob(val).then(res => {
+        this.objRow = {}
+        this.dialogVisible = false
+        this.getList(this.formParams)
+      }).catch((error) => {
+        this.$message.error(error.status.remind)
+      })
     },
     queryList () {
       this.getList(this.formParams)
@@ -135,7 +156,7 @@ export default {
       this.getList(this.formParams)
     },
     getList (formParams) {
-      getDiscussList(formParams).then(res => {
+      getJobList(formParams).then(res => {
         this.tableData = res.data.data || []
         this.total = res.data.count
       }).catch(error => {
@@ -151,13 +172,14 @@ export default {
       }
     },
     handleDetail (val) {
-      this.$router.push({ path: 'detailCard', query: { id: val.id } })
+      this.$router.push({ path: '/jobDetail', query: { id: val.id } })
     },
     handleCheck(val) {
-      this.dialogVisible = true
+      this.idlist = val.id
       this.objRow = {
-        status:1
+        status: val.status
       }
+      this.dialogVisible = true
     },
     handleDel (val) {
       this.$confirm('删除后信息无法恢复，请谨慎操作', '确定要删除招聘会职位吗', {
