@@ -27,22 +27,19 @@
             <el-input v-model="companyForm.natureName" readonly class="width408"></el-input>
           </el-form-item>
           <el-form-item label="岗位类别">
-            <el-input v-model="companyForm.link_tel" readonly class="width408"></el-input>
+            <el-input v-model="companyForm.type_name" readonly class="width408"></el-input>
           </el-form-item>
           <el-form-item label="学历要求">
-          <el-input v-model="companyForm.eduName" readonly class="width408"></el-input>
-        </el-form-item>
+           <el-input v-model="companyForm.eduName" readonly class="width408"></el-input>
+          </el-form-item>
           <el-form-item label="职业要求">
             <el-input v-model="companyForm.job_requirements" readonly class="width408"></el-input>
-          </el-form-item>
-          <el-form-item label="职位福利">
-            <el-input v-model="companyForm.social_securityName" readonly class="width408"></el-input>
           </el-form-item>
            <el-form-item label="薪资">
             <el-input v-model="companyForm.salaryName" readonly class="width408"></el-input>
           </el-form-item>
           <el-form-item label="社保">
-            <el-input v-model="companyForm.email" readonly class="width408"></el-input>
+            <el-input v-model="companyForm.social_securityName" readonly class="width408"></el-input>
           </el-form-item>
           <el-form-item label="联系人电话">
             <el-input v-model="companyForm.link_tel" readonly class="width408"></el-input>

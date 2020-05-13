@@ -241,7 +241,7 @@
             this.getList(this.params)
           }).catch(err => {
             this.$message({
-              message: err.status.remind,
+              message: err.status.remind || '删除失败',
               type: 'warning'
             });
           })

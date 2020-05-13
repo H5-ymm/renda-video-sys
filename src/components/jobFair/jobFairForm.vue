@@ -90,15 +90,6 @@ export default {
     }
   },
   methods: {
-    pickerOptions: {
-      disabledDate: (time) => {
-        if (this.endTime !== '' && this.endTime != null) {
-          return time.getTime() > this.endTime
-          } else {
-          return time.getTime() < this.endTime
-        }
-      }
-    },
     getInfo(id) {
       jobFairDetail({ id }).then(res => {
         if (res.data) {

@@ -48,6 +48,9 @@ export default {
       this.$emit('handleClose')
     },
     submit () {
+      if(!this.form.status) {
+        return this.$message.warning('请选择审核状态')
+      }
       this.$emit('submit', this.form)
       this.form = {
         status: 0,

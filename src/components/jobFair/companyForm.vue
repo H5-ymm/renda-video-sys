@@ -33,6 +33,7 @@
               <p class="el-input__inner">{{companyForm.provinceName}}{{companyForm.cityName}}{{companyForm.areaName}}</p >
             </div>
             <el-input
+              v-if="companyForm.address"
               v-model="companyForm.address"
               class="width408 team-address"
               :readonly="readonly"
@@ -202,32 +203,46 @@ export default {
     getDetail(id) {
       seeCompanyInfo({ id }).then(res => {
         if (res.data) {
-          this.companyForm = res.data || {}
-          this.license_img = this.companyForm.license_url
+          let info = res.data
+          for (let key in info) {
+            if (info[key] || info[key]!='null') {
+              this.companyForm[key] = info[key]
+            } else {
+              this.companyForm[key] = ''
+            }
+          }
+          this.license_img = this.companyForm.license_url=='null' ? '': this.companyForm.license_url
           this.address.push(this.companyForm.province, this.companyForm.city, this.companyForm.area)
         }
       })
     },
     getInfo (comId) {
       getCompanyInfo({ comId }).then(res => {
-        if (res.data) {
-          this.companyForm = res.data || {}
-          this.license_img = this.companyForm.license_url
+         if (res.data) {
+          let info = res.data
+          for (let key in info) {
+            if (info[key]&&info[key]!='null') {
+              this.companyForm[key] = info[key]
+            } else {
+              this.companyForm[key] = ''
+            }
+          }
+          this.license_img = this.companyForm.license_url=='null' ? '': this.companyForm.license_url
           this.address.push(this.companyForm.province, this.companyForm.city, this.companyForm.area)
         }
       })
     },
-    getImg (file) {
-      let url = null;
-      if (window.createObjectURL != undefined) {
-        url = window.createObjectURL(_file)
-      } else if (window.URL != undefined) {
-        url = window.URL.createObjectURL(file)
-      } else if (window.webkitURL != undefined) {
-        url = window.webkitURL.createObjectURL(file)
-      }
-      return url;
-    },
+    // getImg (file) {
+    //   let url = null;
+    //   if (window.createObjectURL != undefined) {
+    //     url = window.createObjectURL(_file)
+    //   } else if (window.URL != undefined) {
+    //     url = window.URL.createObjectURL(file)
+    //   } else if (window.webkitURL != undefined) {
+    //     url = window.webkitURL.createObjectURL(file)
+    //   }
+    //   return url;
+    // },
     uploadLicense (params) {
       const _file = params.file;
       const isLt2M = _file.size / 1024 / 1024 < 2;
@@ -236,8 +251,8 @@ export default {
         return false;
       }
       uploadFile(_file).then(res => {
-        this.license_img = this.getImg(_file)
-        this.companyForm.license_url = getImgUrl(res.data.url)
+        this.license_img = getImgUrl(res.data.url)
+        this.companyForm.license_url = this.license_img
       })
     },
     change (val) {

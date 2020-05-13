@@ -8,6 +8,7 @@ const JFcompany  = resolve => (require(['./components/jobFair/JFcompany.vue'], r
 const checkJobList  = resolve => (require(['./components/jobFair/checkJobList.vue'], resolve))
 const jobDetail  = resolve => (require(['./components/jobFair/jobDetail.vue'], resolve))
 const applicant  = resolve => (require(['./components/account/applicant.vue'], resolve))
+const viewUser  = resolve => (require(['./components/account/viewUser.vue'], resolve))
 const companyAccount  = resolve => (require(['./components/account/company.vue'], resolve))
 const ADSetting  = resolve => (require(['./components/ADSetting.vue'], resolve))
 const companyForm  = resolve => (require(['./components/jobFair/companyForm.vue'], resolve))
@@ -100,6 +101,15 @@ let routers = new Router({
           children: [
           ]
         },
+        {
+          path: '/viewUser',  // 求职者账户
+          component: viewUser,
+          meta: {
+            requiresAuth: 2
+          },
+          children: [
+          ]
+        },    
         {
           path: '/ADSetting',  //添加用户
           component: ADSetting,

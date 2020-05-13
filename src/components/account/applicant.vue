@@ -54,7 +54,7 @@
       <el-pagination class="team-pagination" @size-change="handleSizeChange" @current-change="handleCurrentChange" 
       :current-page="formParams.page" :page-sizes="[10, 30, 50, 100]" :page-size="formParams.limit" layout="total, sizes, prev, pager, next" :total="total"></el-pagination>
     </div>
-      <el-dialog title="添加账户" :visible.sync="dialogFormVisible" >
+      <el-dialog :title="title" :visible.sync="dialogFormVisible" >
         <el-form
           :model="userForm"
           :rules="rules"
@@ -95,7 +95,7 @@
   </div>
 </template>
 <script>
-import { wantedJobUserList, addConsumer, delConsumer, seeConsumerInfo } from '@/api/consumer'
+import { wantedJobUserList, addConsumer, delConsumer } from '@/api/consumer'
 import districtSelet from '../districtSelet'
 export default {
   components: {
@@ -135,7 +135,8 @@ export default {
         ]
       },
       address: [],
-      userId: ''
+      userId: '',
+      title: '添加账户'
     }
   },
   created () {
@@ -143,6 +144,8 @@ export default {
   },
   methods: {
      addUser(){
+      this.title = '添加账户'
+      this.userId = ''
       this.dialogFormVisible = true
     },
     reset() {
@@ -189,19 +192,6 @@ export default {
       this.getList(this.formParams)
     },
     selectQuery (key, item) {
-      // if (key == 'login_data') {
-      //   this.formParams['reg_date'] = 0
-      //   this.formParams['status'] = 0
-      // } else if (key == 'reg_date') {
-      //   this.formParams['status'] = 0
-      //   this.formParams['login_data'] = 0
-      // } else {
-      //   this.formParams['reg_date'] = 0
-      //   this.formParams['login_data'] = 0
-      // }
-      // this.keyword = '';
-      // this.formParams[this.value] = '';
-      // this.formParams[key] = item.value
       this.getList(this.formParams)
     },
     handleUser () {
@@ -224,20 +214,9 @@ export default {
       })
     },
     handleEdit (val) {
-      this.userId = val.info_id
-      this.dialogFormVisible = true
-      this.getDetail(val.info_id)
-    },
-    getDetail(id) {
-      seeConsumerInfo({id}).then(res => {
-        let data = res.data
-        for(let key in this.userForm) {
-          this.userForm[key] = data[key]
-        }
-        this.userForm.name = data.nickname
-        this.userForm.provinceName = data.provinceName
-        this.userForm.cityName = data.cityName
-      })
+      let arr = ['求职者账户','查看账户']
+      sessionStorage.setItem('menus', JSON.stringify(arr))
+      this.$router.push({path:'/viewUser', query:{id: val.info_id}})
     },
     submitForm (userForm) {
       this.$refs[userForm].validate((valid) => {

@@ -21,8 +21,8 @@
         </el-form-item>
       </el-form>
       <div class="table-query">
-        <el-button type="primary" class="select-btn">审核</el-button>
-        <el-button>删除</el-button>
+        <el-button type="primary" class="select-btn" @click="handleCheck(obj)">审核</el-button>
+        <el-button @click="handleDel(idlist)">删除</el-button>
         <span class="select-text">
           已选择
           <el-button type="text">{{multipleSelection.length}}&nbsp;</el-button>项
@@ -49,7 +49,7 @@
           <template slot-scope="scope">
             <el-button @click="handleDetail(scope.row)" type="text" size="small">查看</el-button>
             <el-button @click="handleCheck(scope.row)" type="text" size="small">审核</el-button>
-            <el-button @click="handleDel(scope.row)" type="text" size="small">删除</el-button>
+            <el-button @click="handleDel(scope.row.id)" type="text" size="small">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -93,7 +93,11 @@ export default {
         {label: '已结束', value: 2}
       ],
       objRow: {},
-      idlist: ''
+      idlist: '',
+      obj: {
+        id: '',
+        status: 0
+      }
     }
   },
   created () {
@@ -104,11 +108,13 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val
       this.idlist = val.map(item => item.id).join(',')
+      this.obj.id = this.idlist
     },
     toggleSelection() {
       this.multipleSelection = []
       this.idlist =''
       this.$refs.multipleTable.clearSelection();
+      this.obj.id = ''
     },
     submit (val) {
       if (val.status == 2) {
@@ -175,20 +181,27 @@ export default {
       this.$router.push({ path: '/jobDetail', query: { id: val.id } })
     },
     handleCheck(val) {
+      if (!val.id) {
+        return this.$message.warning('请选择职位')
+      }
       this.idlist = val.id
       this.objRow = {
         status: val.status
       }
       this.dialogVisible = true
     },
-    handleDel (val) {
+    handleDel(id) {
+      console.log(id)
+      if (!id) {
+        return this.$message.warning('请选择职位')
+      }
+      this.idlist = id
       this.$confirm('删除后信息无法恢复，请谨慎操作', '确定要删除招聘会职位吗', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        let uid = val.id
-        deleteUser({ uid }).then(res => {
+        deleteUser({ uid: id }).then(res => {
           this.getList(this.formParams)
         })
       }).catch(() => {
