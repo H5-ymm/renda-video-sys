@@ -7,8 +7,9 @@ const $axios = axios.create({
 // const baseURL1 = process.env.VUE_APP_URL + '/index.php'
 // const baseURL = process.env.VUE_APP_URL + '/admin.php'
 // const baseExportURL = process.env.VUE_APP_URL + '/uploads/test/'
+// const baseURL = 'https://d.rsd123.com/admin.php'
 const baseURL = 'http://www.ttxsg.com.cn:39009/admin.php'
-const baseExportURL = 'http://www.ttxsg.com.cn:39009/uploads/test/'
+// const baseExportURL = 'http://www.ttxsg.com.cn:39009/uploads/test/'
 
 //请求拦截
 $axios.interceptors.request.use(
@@ -102,9 +103,11 @@ export function $post (url, params) {
       })
   });
 }
-export function $get (url, params) {
+export function uploadVideoAndFile (params) {
+  let file = new FormData()
+  file.append('image', params)
   return new Promise((resolve, reject) => {
-    $axios.get(`${baseURL}${url}${'?' + QS.stringify(params)}`)
+    $axios.post(`${baseURL}/uploadimg/moreupload`, file)
       .then(res => {
         resolve(res.data)
       })

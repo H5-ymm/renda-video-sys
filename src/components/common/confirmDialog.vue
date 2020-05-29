@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="审核招聘会职位" width="400px" :visible.sync="dialogVisible" :before-close="handleClose">
+  <el-dialog title="审核" width="400px" :visible.sync="dialogVisible" :before-close="handleClose">
     <el-form :model="form" class="lock-form">
       <el-form-item :label="`审核结果`">
         <el-radio-group v-model="form.status">

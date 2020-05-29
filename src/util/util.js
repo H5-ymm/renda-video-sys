@@ -49,4 +49,5 @@ export const getImg = file => {
 export const getImgUrl = url => {
   // const baseUrl = process.env.VUE_APP_URL
   return 'http://www.ttxsg.com.cn:39009/' + url
+  // return 'https://d.rsd123.com/' + url
 }

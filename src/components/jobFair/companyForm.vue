@@ -205,7 +205,7 @@ export default {
         if (res.data) {
           let info = res.data
           for (let key in info) {
-            if (info[key] || info[key]!='null') {
+            if (info[key]&&info[key]!='null') {
               this.companyForm[key] = info[key]
             } else {
               this.companyForm[key] = ''
@@ -232,17 +232,6 @@ export default {
         }
       })
     },
-    // getImg (file) {
-    //   let url = null;
-    //   if (window.createObjectURL != undefined) {
-    //     url = window.createObjectURL(_file)
-    //   } else if (window.URL != undefined) {
-    //     url = window.URL.createObjectURL(file)
-    //   } else if (window.webkitURL != undefined) {
-    //     url = window.webkitURL.createObjectURL(file)
-    //   }
-    //   return url;
-    // },
     uploadLicense (params) {
       const _file = params.file;
       const isLt2M = _file.size / 1024 / 1024 < 2;

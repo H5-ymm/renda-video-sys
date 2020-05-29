@@ -45,19 +45,23 @@ export default {
     return {
       menus: [
         {
-          title: '招聘会管理',
+          title: '视频招聘会',
           icon: 'el-icon-menu',
           submenu: [
             {
               title: '招聘会列表',
               url: '/jobFairList'
             },
+             {
+              title: '宣讲会管理',
+              url: '/lectureManage'
+            },
             {
               title: '审核招聘职位',
               url: '/checkJobList'
             }
           ]
-        },
+        },  
         {
           title: '账户管理',
           icon: 'el-icon-s-custom',
@@ -146,9 +150,16 @@ export default {
         path = '/Userlist'
       } else if (pathStr[1] == 'innDetail') {
         path = '/innList'
+      } else if (pathStr[1]=== 'jobDetail'){
+        path = '/checkJobList'
+      } else if (pathStr[1]=== 'viewUser'){
+        path = '/applicant'
+      } else if (pathStr[1]=== 'companyForm'){
+        path = '/companyAccount'
       } else {
         path = this.$route.fullPath
       }
+      console.log(path)
       return path
 
     },

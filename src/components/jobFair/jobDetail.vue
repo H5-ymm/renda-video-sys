@@ -103,11 +103,13 @@ export default {
   },
   created () {
     let params = 'com_type,com_scale,job_array'
+    // 职位详情 招聘会企业查看
     this.getList(params)
     if (this.$route.query.jfId) {
       this.companyForm.jfId = this.$route.query.jfId
-    } 
-    if (this.$route.query.id ) {
+    }
+    // 企业用户详情
+    if (this.$route.query.id) {
       this.id = this.$route.query.id
       this.getInfo(this.id)
     }
@@ -120,6 +122,7 @@ export default {
       }
       return arr
     },
+    // 获取常量
     getList (filed) {
       getConstant({ filed }).then(res => {
         const { com_scale, com_type, job_array } = res.data
@@ -128,6 +131,7 @@ export default {
         this.jobList = this.getArray(job_array)
       })
     },
+    // 企业账户详情
     getInfo (id) {
       fairJobInfo({ id }).then(res => {
         if (res.data) {
@@ -137,17 +141,7 @@ export default {
         }
       })
     },
-    getImg (file) {
-      let url = null;
-      if (window.createObjectURL != undefined) {
-        url = window.createObjectURL(_file)
-      } else if (window.URL != undefined) {
-        url = window.URL.createObjectURL(file)
-      } else if (window.webkitURL != undefined) {
-        url = window.webkitURL.createObjectURL(file)
-      }
-      return url;
-    },
+    // 上传
     uploadLicense (params) {
       const _file = params.file;
       const isLt2M = _file.size / 1024 / 1024 < 2;
@@ -160,16 +154,19 @@ export default {
         this.companyForm.license_url = getImgUrl(res.data.url)
       })
     },
+    // 省市区
     change (val) {
       this.companyForm.province = val[0]
       this.companyForm.city = val[1]
       this.companyForm.area = val[2]
     },
+    // 审核
     submitCheck () {
       if (this.companyForm.status) return
       this.objRow.status = this.companyForm.status
       this.dialogVisible = true
     },
+    // 审核
     submit (val) {
       if (val.status == 2) {
         if (!val.reason) {
@@ -189,6 +186,7 @@ export default {
         this.$message.error(error.status.remind)
       })
     },
+    // 提交
     submitForm (companyForm) {
       this.$refs[companyForm].validate((valid) => {
         if (valid) {
@@ -203,9 +201,6 @@ export default {
           return false;
         }
       });
-    },
-    resetForm (companyForm) {
-      this.$refs[companyForm].resetFields()
     }
   }
 }

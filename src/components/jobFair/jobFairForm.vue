@@ -7,16 +7,18 @@
         ref="jobForm"
         label-width="150px"
         label-position="right"
-        class="teamMessage-form"
-      >
+        class="teamMessage-form">
         <section class="section-box">
           <el-form-item label="招聘会标题" prop="title">
             <el-input v-model="jobForm.title" class="width408" placeholder="请输入招聘会标题"></el-input>
           </el-form-item>
+          <el-form-item label="招聘会主办方" prop="sponsor">
+            <el-input v-model="jobForm.sponsor" class="width408" placeholder="请输入招聘会主办方"></el-input>
+          </el-form-item>
           <el-form-item label="起止时间" required>
              <el-date-picker
               class="width408"
-              type="daterange"
+              type="datetimerange"
               unlink-panels
               value-format="timestamp"
               @change="changeDate" 
@@ -48,7 +50,6 @@
         </el-form-item>
         <el-form-item class="teamMessage-btn">
           <el-button type="primary" @click="submitForm('jobForm')">{{id?'保存':'发布'}}</el-button>
-          <!-- <el-button @click="resetForm('jobForm')">取消</el-button> -->
         </el-form-item>
         </section>
       </el-form>
@@ -63,6 +64,7 @@ export default {
       jobForm: {
         title: '',
         scale: 1,
+        sponsor: '',
         is_audit: 1,
         invitation_letter: '',
         starttime:'',
@@ -71,6 +73,9 @@ export default {
       rules: {
         title: [
           { required: true, message: '请输入招聘会标题', trigger: 'blur' }
+        ],
+        sponsor: [
+          { required: true, message: '请输入招聘会主办方', trigger: 'blur' }
         ],
         invitation_letter: [
           { required: true, message: '请输入招聘会介绍', trigger: 'blur' }
@@ -90,6 +95,7 @@ export default {
     }
   },
   methods: {
+    // 获取招聘会详情
     getInfo(id) {
       jobFairDetail({ id }).then(res => {
         if (res.data) {
@@ -104,12 +110,14 @@ export default {
         }
       })
     },
+    // 日期
     changeDate(val) {
       let starttime = val ? val[0] + '' : ''
       let endtime =  val ?  val[1] + '' : ''
       this.jobForm.starttime = starttime ? starttime.substring(0, 10) : ''
       this.jobForm.endtime = endtime ? endtime.substring(0, 10) : ''
     },
+    // 发布招聘会
     add() {
       addJobFair(this.jobForm).then(res => {
         if (res.data) {
@@ -123,8 +131,9 @@ export default {
         }        
       })
     },
+    // 编辑招聘会
     edit() {
-       editJobFair(this.jobForm).then(res => {
+      editJobFair(this.jobForm).then(res => {
         if (res.data) {
           this.$router.push('/jobFairList')
         }  else {
@@ -136,6 +145,7 @@ export default {
         }        
       })
     },
+    // 提交
     submitForm (jobForm) {
       this.$refs[jobForm].validate((valid) => {
         if (valid) {

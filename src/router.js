@@ -13,6 +13,9 @@ const companyAccount  = resolve => (require(['./components/account/company.vue']
 const ADSetting  = resolve => (require(['./components/ADSetting.vue'], resolve))
 const companyForm  = resolve => (require(['./components/jobFair/companyForm.vue'], resolve))
 const Report  = resolve => (require(['./components/Report.vue'], resolve))
+const lectureManage  = resolve => (require(['./components/lectureManage/list.vue'], resolve))
+const lectureForm  = resolve => (require(['./components/lectureManage/lectureForm.vue'], resolve))
+
 Vue.use(Router)
 
 let routers = new Router({
@@ -62,11 +65,29 @@ let routers = new Router({
           path: '/jobFairForm',
           name: 'jobFairForm',
           component: jobFairForm,
-          title: '发布视频会',
+          title: '发布招聘会',
           meta: {
             requiresAuth: 2
           }
         },
+        {
+          path: '/lectureManage',
+          name: 'lectureManage',
+          component: lectureManage,
+          title: '宣讲会管理',
+          meta: {
+            requiresAuth: 2
+          }
+        },
+        {
+          path: '/lectureForm',
+          name: 'lectureForm',
+          component: lectureForm,
+          title: '宣讲会管理',
+          meta: {
+            requiresAuth: 2
+          }
+        },  
         {
           path: '/JFcompany',
           name: 'JFcompany',

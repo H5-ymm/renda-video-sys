@@ -25,10 +25,10 @@ export default {
       this.breadcrumbs = JSON.parse(sessionStorage.getItem('menus'))
       // console.log(to.path);
     }
+  },
+  created() {
+    this.breadcrumbs = JSON.parse(sessionStorage.getItem('menus'))
   }
-  // created() {
-  //   this.breadcrumbs = JSON.parse(sessionStorage.getItem('menus'))
-  // }
 }
 </script>
 <style lang="scss">

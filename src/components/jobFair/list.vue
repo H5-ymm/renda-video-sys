@@ -34,6 +34,7 @@
         @sort-change="sortChange">
           <el-table-column type="selection" align="center" width="60"></el-table-column>
           <el-table-column label="招聘会名称" prop="title" align="center" width="160"></el-table-column>
+          <el-table-column label="招聘会主办方" prop="sponsor" align="center" width="160"></el-table-column>
           <el-table-column label="开始时间"  prop="sortStart" sortable="custom" align="center" width="160"> 
             <template slot-scope="scope">
               <span>{{$moment.unix(scope.row.starttime).format('YYYY-MM-DD HH:ss')}}</span>
@@ -102,18 +103,22 @@ export default {
     this.getList(this.formParams)
   },
   methods: {
+    // 添加发布按钮
     addJobFair() {
       let arr = ['招聘会列表','发布招聘会']
       sessionStorage.setItem('menus', JSON.stringify(arr))
       this.$router.push('/jobFairForm')
     },
+    // 多选
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
+    // 取消多选
     toggleSelection() {
       this.multipleSelection = []
       this.$refs.multipleTable.clearSelection();
     },
+    // 时间排序
     sortChange(column) {
       if (column.order == 'ascending') {
         this.formParams[column.prop]= 'asc'
@@ -122,9 +127,11 @@ export default {
       }
       this.getList(this.formParams)
     },
+    // 查询
     queryList () {
       this.getList(this.formParams)
     },
+    // 重置
     reset() {
       this.formParams = {
         limit: 10,
@@ -134,6 +141,7 @@ export default {
       }
       this.getList(this.formParams)
     },
+    // 分页
     handleSizeChange (val) {
       this.formParams.limit = val
       this.getList(this.formParams)
@@ -142,9 +150,7 @@ export default {
       this.formParams.page = val
       this.getList(this.formParams)
     },
-    refurbish () {
-      this.getList(this.formParams)
-    },
+    // 获取列表
     getList (formParams) {
       getJobFairList(formParams).then(res => {
         this.tableData = res.data.data || []
@@ -153,23 +159,26 @@ export default {
         this.$message.error(error.status.remind)
       })
     },
+    // 状态过滤
     getStatus (val) {
       let obj = this.statusList.find(item => {
         return val == item.value
       })
-      console.log(obj)
       if (obj) {
         return obj.label
       }
     },
+    // 查看企业
     viewCompany(val) {
       let arr = ['招聘会列表','参会企业']
       sessionStorage.setItem('menus', JSON.stringify(arr))
       this.$router.push({ path: '/JFcompany', query: { id: val.id } })
     },
+    // 查看详情
     handleDetail (val) {
       this.$router.push({ path: '/jobFairForm', query: { id: val.id } })
     },
+    // 删除
     handleDel (val) {
       this.$confirm('请确定已与企业沟通删除后信息无法恢复！', '确定要删除招聘会吗？', {
         confirmButtonText: '确定',
@@ -192,7 +201,6 @@ export default {
   }
 }
 </script>
-
 <style lang="scss">
  @import '../../assets/css/table-list';
 </style>

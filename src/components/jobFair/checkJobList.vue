@@ -69,7 +69,7 @@
 </template>
 <script>
 import confirmDialog from '../common/confirmDialog'
-import { getJobList, trialFairJob } from '@/api/job'
+import { getJobList, trialFairJob , delFairJob} from '@/api/job'
 export default {
   components: {
     confirmDialog
@@ -195,14 +195,17 @@ export default {
       if (!id) {
         return this.$message.warning('请选择职位')
       }
-      this.idlist = id
       this.$confirm('删除后信息无法恢复，请谨慎操作', '确定要删除招聘会职位吗', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteUser({ uid: id }).then(res => {
-          this.getList(this.formParams)
+        delFairJob({ idList: id }).then(res => {
+         if(res.data) {
+           this.getList(this.formParams)
+          } else {
+           this.$message.warning('删除失败')
+         }
         })
       }).catch(() => {
         console.log(2)

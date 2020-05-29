@@ -161,6 +161,8 @@ export default {
       })
     },
     handleEdit (val) {
+      let arr = ['企业账户', '查看企业']
+      sessionStorage.setItem('menus', JSON.stringify(arr))
       this.$router.push({ path: '/companyForm', query: { id: val.com_id, view: 1 } })
     },
     handleDel (idList) {
