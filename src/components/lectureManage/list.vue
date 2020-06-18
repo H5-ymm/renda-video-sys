@@ -49,7 +49,7 @@
         <el-table-column label="联系人电话" prop="link_tel" align="center" width="160"></el-table-column>
         <el-table-column label="状态" align="center" width="160">
           <template slot-scope="props">
-             <span class="status" :class="props.row.status === 0 ? 'grayyuan': props.row.status === 1 ? 'greenyuan': 'redyuan'">{{props.row.status === 0 ?'待审核':props.row.status === 1?'已通过': '已拒绝'}}</span>
+             <span class="status" :class="props.row.status === 0 ? 'grayyuan': props.row.status === 1 ? 'greenyuan': 'redyuan'">{{props.row.status === 0 ?'待审核':props.row.status === 1?'已通过': props.row.status === 2?'已拒绝':'已结束'}}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center" min-width="160">
@@ -195,7 +195,7 @@ export default {
       })
     },
     handleDel (idList) {
-      this.$confirm('你确定要删除吗?', '', {
+      this.$confirm('你确定要删除吗?删除之后将不能观看回放', '', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

@@ -2,7 +2,7 @@
   <div class="tables-box">
     <div class="table-list team-form">
       <el-form :model="formParams" class="demo-form-inline" :inline="true">
-        <el-form-item label="企业名称">
+        <el-form-item label="企业名称" v-if="!com_id">
           <el-input
             class="width200"
             v-model="formParams.companyName"
@@ -33,10 +33,10 @@
         <el-table-column type="selection" align="center" width="60"></el-table-column>
         <el-table-column label="职位展示位置" align="center" width="160">
           <template slot-scope="props">
-             <span>{{props.row.exhibiton === 1 ?'招聘会':props.row.status === 2?'宣讲会': '招聘会/宣讲会'}}</span>
+             <span>{{props.row.exhibition == 1?'招聘会':props.row.exhibition == 2?'宣讲会': '招聘会/宣讲会'}}</span>
           </template>
         </el-table-column>
-        <el-table-column label="参会企业" align="center" prop="com_name" min-width="160">
+        <el-table-column label="参会企业" v-if="!com_id" align="center" prop="com_name" min-width="160">
         </el-table-column>
          <el-table-column label="发布职位" align="center" prop="job_name" width="160">      
         </el-table-column>
@@ -45,7 +45,7 @@
              <span class="status" :class="props.row.status === 0 ? 'grayyuan': props.row.status === 1 ? 'greenyuan': 'redyuan'">{{props.row.status === 0 ?'待审核':props.row.status === 1?'已通过': '已拒绝'}}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="160">
+        <el-table-column label="操作" align="center"  min-width="160">
           <template slot-scope="scope">
             <el-button @click="handleDetail(scope.row)" type="text" size="small">查看</el-button>
             <el-button @click="handleCheck(scope.row)" type="text" size="small">审核</el-button>
@@ -92,16 +92,23 @@ export default {
         {label: '进行中', value: 1},
         {label: '已结束', value: 2}
       ],
-      objRow: {},
+      objRow: {
+        status: 0
+      },
       idlist: '',
       obj: {
         id: '',
         status: 0
-      }
+      },
+      com_id: ''
     }
   },
   created () {
     // 初始化查询标签数据
+    if (this.$route.query.id) {
+      this.com_id = this.$route.query.id
+      this.formParams.comId = this.com_id
+    }
     this.getList(this.formParams)
   },
   methods: {
@@ -131,7 +138,9 @@ export default {
     },
     submitCheck (val) {
       trialFairJob(val).then(res => {
-        this.objRow = {}
+        this.objRow = {
+          status: 0
+        }
         this.dialogVisible = false
         this.getList(this.formParams)
       }).catch((error) => {
@@ -191,7 +200,6 @@ export default {
       this.dialogVisible = true
     },
     handleDel(id) {
-      console.log(id)
       if (!id) {
         return this.$message.warning('请选择职位')
       }

@@ -46,7 +46,8 @@
         </el-table-column>
         <el-table-column label="操作" align="center" min-width="120">
           <template slot-scope="scope">
-            <el-button @click="handleEdit(scope.row)" type="text" size="small">查看</el-button>
+            <el-button @click="viewJob(scope.row)" type="text" size="small">查看职位</el-button>
+            <el-button @click="handleEdit(scope.row)" type="text" size="small">详情</el-button>
             <el-button @click="handleDel(scope.row.id)" type="text" size="small">删除</el-button>
           </template>
         </el-table-column>
@@ -77,7 +78,7 @@ export default {
         { label: '待审核', value: 1 },
         { label: '已通过', value: 2 },
         { label: '未通过', value: 3 },
-      ],
+      ]
     }
   },
   created () {
@@ -98,6 +99,12 @@ export default {
         type: 1
       }
       this.getList(this.formParams)
+    },
+    viewJob(item) {
+      console.log(item)
+      let arr = ['企业账户', item.com_name + '-'+ '职位列表']
+      sessionStorage.setItem('menus', JSON.stringify(arr))
+      this.$router.push({path: '/checkJobList', query: { id: item.com_id }})
     },
     toggleSelection() {
       this.multipleSelection = []

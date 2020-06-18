@@ -154,7 +154,7 @@ export default {
         path = '/checkJobList'
       } else if (pathStr[1]=== 'viewUser'){
         path = '/applicant'
-      } else if (pathStr[1]=== 'companyForm'){
+      } else if (pathStr[1]=== 'companyForm' || pathStr[1]=== 'checkJobList'){
         path = '/companyAccount'
       } else {
         path = this.$route.fullPath

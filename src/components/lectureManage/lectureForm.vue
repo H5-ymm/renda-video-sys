@@ -42,7 +42,10 @@
               :show-file-list="false"
               :http-request="uploadFile"
             >
-              <img v-if="enclosure" :src="enclosure" class="avatar" />
+             <video name="media" id="video" ref="video1" class="avatar" preload="auto" v-if="enclosure&&lectureForm.type==1" >
+                <source :src="enclosure">您的浏览器暂不支持视频播放
+              </video>
+              <img v-if="enclosure&&lectureForm.type==2" :src="enclosure" class="avatar" />
               <i v-else class="el-icon-circle-plus avatar-uploader-icon"></i>
               <p>上传图片/视频</p>
               </el-upload>
@@ -79,7 +82,7 @@ export default {
       enclosure: '',
        pickerOptions: {
           disabledDate(time) {
-            return time.getTime() <= Date.now();
+            return time.getTime() < Date.now() - 24 * 60 * 60 * 1000
           }
         },
       rules: {
