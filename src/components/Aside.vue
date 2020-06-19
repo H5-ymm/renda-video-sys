@@ -140,8 +140,8 @@ export default {
     routerli() {
       // 对应路由
       let pathStr = this.$route.path.split('/')
+      let pathParams = this.$route.fullPath.split('=')
       let path = ''
-      console.log(pathStr)
       if (pathStr[1] == 'personalForm') {
         path = '/teamList'
       } else if (pathStr[1] == 'companyInfo') {
@@ -154,14 +154,14 @@ export default {
         path = '/checkJobList'
       } else if (pathStr[1]=== 'viewUser'){
         path = '/applicant'
-      } else if (pathStr[1]=== 'companyForm' || pathStr[1]=== 'checkJobList'){
+      } else if (pathStr[1]=== 'companyForm'){
+        path = '/companyAccount'
+      }  else if (pathStr[1]=== 'checkJobList' && pathParams.length==2) {
         path = '/companyAccount'
       } else {
         path = this.$route.fullPath
       }
-      console.log(path)
       return path
-
     },
     names() {
       return this.$store.state.user.users

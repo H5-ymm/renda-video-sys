@@ -22,7 +22,7 @@
               class="width408"
               type="datetime"
               value-format="timestamp"
-              format="yyyy-MM-DD HH:mm"
+              format="yyyy-MM-dd HH:mm"
               @change="changeDate"
               :picker-options="pickerOptions"
               v-model="starttime"
@@ -190,6 +190,7 @@ export default {
     },
     // 日期
     changeDate(val) {
+      console.log(val)
       let starttime = val + ''
       this.lectureForm.starttime = starttime.substring(0, 10)
     },

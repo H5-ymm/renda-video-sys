@@ -2,7 +2,7 @@ import axios from 'axios';
 import QS from 'qs';
 const $axios = axios.create({
   baseURL: process.env.VUE_APP_URL,
-  timeout: 4000
+  timeout: 100000
 });
 // const baseURL1 = process.env.VUE_APP_URL + '/index.php'
 // const baseURL = process.env.VUE_APP_URL + '/admin.php'
