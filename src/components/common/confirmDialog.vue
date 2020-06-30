@@ -34,6 +34,10 @@ export default {
       }]
     }
   },
+  created() {
+    console.log(this.objRow)
+    this.form = this.objRow
+  },
   watch: {
     objRow(val) {
       console.log(val)

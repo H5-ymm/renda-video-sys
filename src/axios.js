@@ -2,13 +2,13 @@ import axios from 'axios';
 import QS from 'qs';
 const $axios = axios.create({
   baseURL: process.env.VUE_APP_URL,
-  timeout: 100000
+  // timeout: 100000
 });
 // const baseURL1 = process.env.VUE_APP_URL + '/index.php'
 // const baseURL = process.env.VUE_APP_URL + '/admin.php'
 // const baseExportURL = process.env.VUE_APP_URL + '/uploads/test/'
-// const baseURL = 'https://d.rsd123.com/admin.php'
-const baseURL = 'http://www.ttxsg.com.cn:39009/admin.php'
+const baseURL = 'https://d.rsd123.com/admin.php'
+// const baseURL = 'http://www.ttxsg.com.cn:39009/admin.php'
 // const baseExportURL = 'http://www.ttxsg.com.cn:39009/uploads/test/'
 
 //请求拦截

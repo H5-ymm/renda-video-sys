@@ -4,7 +4,7 @@
     <!-- 关于 三级路由  不匹配侧边栏的问题，需要 对 返回的路由对象 进行重新改写,见 computed=> routerli -->
     <el-row class="tac">
       <el-col :span="24">
-        <div class="names">人事达</div>
+        <div class="names">应届生</div>
         <el-menu
           class="el-menu-vertical-demo"
           background-color="#000"

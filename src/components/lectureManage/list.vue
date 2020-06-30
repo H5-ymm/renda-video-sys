@@ -54,7 +54,7 @@
         </el-table-column>
         <el-table-column label="操作" align="center" min-width="160">
           <template slot-scope="scope">
-            <el-button @click="handleCheck(scope.row)" type="text" size="small">审核</el-button>
+            <el-button @click="handleCheck(scope.row)" type="text" size="small" v-if="scope.row.status<3">审核</el-button>
             <el-button @click="handleView(scope.row)" type="text" size="small">查看</el-button>
             <el-button @click="handleView(scope.row)" type="text" size="small">编辑</el-button>
             <el-button @click="handleDel(scope.row.id)" type="text" size="small">删除</el-button>
@@ -154,8 +154,9 @@ export default {
     },
     // 审核
     handleCheck(val){
-      this.objRow.status = val.status
+      console.log(val)
       this.dialogVisible = true
+      this.objRow.status = val.status
       this.idList = val.id
     },
     submit (val) {
@@ -187,7 +188,9 @@ export default {
     },
     submitCheck (val) {
       lectureCheck(val).then(res => {
-        this.objRow = {}
+        this.objRow = {
+          status: 0
+        }
         this.dialogVisible = false
         this.getList(this.formParams)
       }).catch((error) => {
